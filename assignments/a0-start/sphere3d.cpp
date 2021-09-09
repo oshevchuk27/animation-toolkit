@@ -9,14 +9,15 @@ class Sphere3D : public atkui::Framework {
      };
      // the initial position of the sphere
      vec3 currentPos;
-     float velocity;
-     vec3 direction;
+     // the direction of the sphere movement
+     vec3 velocity;
+     // indicates whether the SPACEBAR key is pressed
      bool spaceKey;
 
    virtual void setup() {
+       // initial position of the sphere
        currentPos = vec3(0);
-       velocity = 10.0f;
-       direction = randomUnitVector();
+       // initially, the SPACEBAR is not pressed
        spaceKey = false;
    }
 
@@ -27,8 +28,9 @@ class Sphere3D : public atkui::Framework {
     // draw a sphere at center of the world
     float radius = 50.0;
 
+   
     if (spaceKey) {
-        currentPos = currentPos + velocity * dt() * direction;
+        currentPos = currentPos + 100.0f * velocity * dt();
     }
 
     drawSphere(currentPos, radius);
@@ -37,9 +39,11 @@ class Sphere3D : public atkui::Framework {
   virtual void keyUp(int key, int mods) {
       if (key == GLFW_KEY_SPACE) {
           spaceKey = true;
+          velocity = randomUnitVector();
       }
       else if (key == GLFW_KEY_R) {
           spaceKey = false;
+          // going back to the original position
           currentPos = vec3(0);
       }
   }
