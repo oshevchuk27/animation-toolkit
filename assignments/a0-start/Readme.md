@@ -6,9 +6,6 @@
 
 As can be seen on the image above, the red sphere is drawn behind the green one. 
 
-* images, gifs, videos
-* brief description of what each image/gif/video shows
-
 ## Sphere3D
 
  <img src='https://github.com/oshevchuk27/animation-toolkit/blob/main/assignments/a0-start/videowalkthrough.gif' title='Sphere moving gif' width='' alt='Sphere moving gif' />
