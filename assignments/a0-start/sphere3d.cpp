@@ -9,18 +9,16 @@ class Sphere3D : public atkui::Framework {
      };
      // the initial position of the sphere
      vec3 currentPos;
-     vec3 velocity;
+     float velocity;
      vec3 direction;
      bool spaceKey;
 
    virtual void setup() {
-
        currentPos = vec3(0);
-       velocity = vec3(100);
+       velocity = 10.0f;
        direction = randomUnitVector();
        spaceKey = false;
    }
-
 
   virtual void scene() {
     // colors are RGB triplets in range [0,1]
@@ -34,12 +32,7 @@ class Sphere3D : public atkui::Framework {
     }
 
     drawSphere(currentPos, radius);
-
-
-
   }
-
- 
 
   virtual void keyUp(int key, int mods) {
       if (key == GLFW_KEY_SPACE) {
