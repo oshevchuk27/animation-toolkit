@@ -4,7 +4,7 @@
 
 ![image](https://user-images.githubusercontent.com/60118869/132425249-f23a3f0c-eb0b-4af9-9e71-b354b1f60945.png)
 
-As can be seen on the image above, the red sphere is drawn behind the green one. 
+As can be seen on the image above, the red sphere is drawn behind the green one in the 2D plane. 
 
 ## Sphere3D
 
@@ -19,4 +19,4 @@ https://user-images.githubusercontent.com/60118869/132798028-3b442cf0-ac9b-4ef7-
 
 
 
-As can be seen on both the gif and video above, the sphere is moving in the random direction each time a SPACEBAR key is pressed and returns to the original position once R key is pressed.
+As can be seen on both the gif and video above, the sphere in 3D space is moving in the random direction each time a SPACEBAR key is pressed and returns to the original position once R key is pressed.
