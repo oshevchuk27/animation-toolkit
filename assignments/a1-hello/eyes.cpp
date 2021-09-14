@@ -8,8 +8,7 @@ class Eyes : public atkui::Framework
     }
 
     virtual void setup() {
-        theta = 0.0;
-        thetaRate = 0.02;
+        thetaRate = 2.0;
     }
 
     virtual void scene() {
@@ -19,13 +18,12 @@ class Eyes : public atkui::Framework
         drawSphere(vec3(350, 250, 0), 150);
         // setting black color
         setColor(vec3(0));
-        theta += thetaRate * elapsedTime();
-        float py = 250;
-        //float px = 250.0f;
-        float px = 50.0f * sin(elapsedTime()) + 150.0;
-        drawSphere(vec3(px, py, 50), 50);
-
-
+        theta = thetaRate * elapsedTime();
+        float py1 = 250;
+        float px1 = 50.0f * sin(theta) + 150.0;
+        drawSphere(vec3(px1, py1, 100), 40);
+        float px2 = 50.0f * sin(theta) + 350.0;
+        drawSphere(vec3(px2, py1, 100), 40);
     }
 
    private:
