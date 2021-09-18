@@ -11,7 +11,7 @@ public:
 
    virtual void setup() {
 	   theta = 0.0;
-	   thetaRate = 0.03;
+	   thetaRate = 0.01;
    }
 
    virtual void scene() {
