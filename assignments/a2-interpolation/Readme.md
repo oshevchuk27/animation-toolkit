@@ -7,7 +7,8 @@ TODO: Replace this text with
 Gradient
 
 
-![gradient](https://user-images.githubusercontent.com/60118869/134764228-5ed94de3-f84b-4eee-add3-cdf284d6c005.gif)
+![gradient](https://user-images.githubusercontent.com/60118869/134764276-79802efc-6ee3-4acc-8d32-4069284140d6.gif)
+
 
 
 
