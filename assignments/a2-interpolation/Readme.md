@@ -16,6 +16,12 @@ Draw Curve
 ![drawcurve](https://user-images.githubusercontent.com/60118869/134764907-06ae6fbc-67af-4f10-b353-334ba8646131.gif)
 
 
+Particle Cubic
+
+
+
+![particlecubic](https://user-images.githubusercontent.com/60118869/134765036-14fe90d2-0826-4319-b7fb-2290fcd934e9.gif)
+
 
 
 
