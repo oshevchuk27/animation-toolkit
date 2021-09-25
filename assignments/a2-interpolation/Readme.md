@@ -10,6 +10,12 @@ Gradient
 ![gradient](https://user-images.githubusercontent.com/60118869/134764276-79802efc-6ee3-4acc-8d32-4069284140d6.gif)
 
 
+Draw Curve 
+
+
+![drawcurve](https://user-images.githubusercontent.com/60118869/134764907-06ae6fbc-67af-4f10-b353-334ba8646131.gif)
+
+
 
 
 
