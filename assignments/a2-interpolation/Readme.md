@@ -30,12 +30,17 @@ Single Curve
 ![curves](https://user-images.githubusercontent.com/60118869/134713438-85142106-9d15-42c6-948a-592b39e6855f.gif)
 
 
+Trail effect
+
+
+
+https://user-images.githubusercontent.com/60118869/134766593-354e7f4b-c829-483c-808e-a1b6617ec4be.mp4
+
+
+
+
 Unique Scene
 
 ![unique](https://user-images.githubusercontent.com/60118869/134763867-be9338a0-42c9-4710-a8ac-5267fa4709bb.gif)
 
-
-
-* images, gifs, videos
-* brief description of what each image/gif/video shows
 
