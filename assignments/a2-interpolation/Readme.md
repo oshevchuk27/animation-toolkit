@@ -4,6 +4,13 @@ TODO: Replace this text with
 
 
 
+Gradient
+
+
+![gradient](https://user-images.githubusercontent.com/60118869/134764228-5ed94de3-f84b-4eee-add3-cdf284d6c005.gif)
+
+
+
 
 Single Curve
 
