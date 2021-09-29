@@ -1,5 +1,5 @@
 #include "atkui/framework.h"
-#include <corecrt_math_defines.h>
+
 
 
 using namespace glm;
