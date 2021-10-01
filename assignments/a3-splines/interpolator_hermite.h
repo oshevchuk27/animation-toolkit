@@ -18,11 +18,19 @@ public:
 
     virtual glm::vec3 interpolate(int segment, double u) const {
        // todo: your code here
-       return glm::vec3(0);
+        float H03_u = 1 - 3.0f * (float)pow(u, 2) + 2.0f * (float)pow(u, 3);
+        float H13_u = u * (float)pow(1 - u, 2);
+        float H23_u = -1.0f * (float)pow(u, 2) + (float)pow(u, 3);
+        float H33_u = 3.0f * (float)pow(u, 2) - 2.0f * (float)pow(u, 3);
+        glm::vec3 p = getControlPoint(segment * 2) * H03_u + getControlPoint(segment * 2 + 1) * H13_u
+            + getControlPoint(segment * 2 + 3) * H23_u + getControlPoint(segment * 2 + 2) * H33_u;
+        return p;
     }
 
     virtual void computeControlPoints(const std::vector<glm::vec3>& keys) {
         // todo: your code here
+
+        mCtrlPoints.clear();
 
         Eigen::MatrixXd A(keys.size(), keys.size());
         Eigen::MatrixXd p(keys.size(), 3);
@@ -144,11 +152,6 @@ public:
 
 
         }
-
-    
-        
-       
-    
 
     void setClamped(bool c) { mIsClamped = c; }
     bool isClamped() const { return mIsClamped; }
