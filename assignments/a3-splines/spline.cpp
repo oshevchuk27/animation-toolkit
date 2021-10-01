@@ -107,13 +107,6 @@ glm::vec3 Spline::getValue(float t) const {
   // todo: your code here
   // compute the segment containing t
   // compute the value [0, 1] along the segment for interpolation
- // if (t < getTime(0)) {
-      //value = mKeys[0];
- // }
-  //else if (t > getTime((int)mKeys.size() - 1)) {
-      //value = mKeys[mKeys.size() - 1];
-  //}
-  std::cout << mKeys.size() << std::endl;
 
   if (mKeys.size() == 0) {
       value = glm::vec3(0);
@@ -133,12 +126,6 @@ glm::vec3 Spline::getValue(float t) const {
                   segment = i;
                   // computing normalized time
                   u = (t - getTime(i)) / (getTime(i + 1) - getTime(i));
-                  //if (getInterpolationType() == "Linear") {
-                      //value = gDefaultInterpolator.interpolate(segment, t);
-                      //value = mKeys[i] * (float)(1 - u) + mKeys[i + 1] * (float)u;
-                  //}
-                 
-
               }
           }
 
