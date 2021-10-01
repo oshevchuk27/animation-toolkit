@@ -28,24 +28,52 @@ public:
         Eigen::MatrixXd p(keys.size(), 3);
         Eigen::MatrixXd pPrime(keys.size(), 3); // slopes for each control point
 
-        if (mIsClamped) {
             for (int i = 0; i < keys.size(); i++) {
                 for (int j = 0; j < keys.size(); j++) {
                     if (i == 0) {
-                        if (j == 0) {
-                            A(i, j) = 1;
+                        if (mIsClamped) {
+                            if (j == 0) {
+                                A(i, j) = 1;
+                            }
+                            else {
+                                A(i, j) = 0;
+                            }
+
                         }
                         else {
-                            A(i, j) = 0;
+                            if (j == 0) {
+                                A(i, j) = 2;
+                            }
+                            else if (j == 1) {
+                                A(i, j) = 1;
+                            }
+                            else {
+                                A(i, j) = 0;
+                            }
                         }
+                        
                     }
                     else if (i == keys.size() - 1) {
-                        if (j == keys.size() - 1) {
-                            A(i, j) = 1;
+                        if (mIsClamped) {
+                            if (j == keys.size() - 1) {
+                                A(i, j) = 1;
+                            }
+                            else {
+                                A(i, j) = 0;
+                            }
+
+                        } else {
+                            if (j == keys.size() - 1) {
+                                A(i, j) = 2;
+                            }
+                            else if (j == keys.size() - 2) {
+                                A(i, j) = 1;
+                            }
+                            else {
+                                A(i, j) = 0;
+                            }
                         }
-                        else {
-                            A(i, j) = 0;
-                        }
+                        
                     }
                     else {
                         if (j == i - 1) {
@@ -68,10 +96,29 @@ public:
             }
 
             for (int i = 0; i < keys.size(); i++) {
+                for (int j = 0; j < keys.size(); j++) {
+                    std::cout << A(i, j) << std::endl;
+                }
+            }
+
+            
+
+            for (int i = 0; i < keys.size(); i++) {
                 for (int j = 0; j < 3; j++) {
                     // hardcoding the first and last slopes
                     if (i == 0 || i == keys.size() - 1) {
-                        p(i, j) = mClampDir[j];
+                        if (mIsClamped) {
+                            p(i, j) = mClampDir[j];
+                        }
+                        else {
+                            if (i == 0) {
+                                p(i, j) = (3.0f * (keys[i + 1] - keys[i]))[j];
+                            }
+                            else {
+                                p(i, j) = (3.0f * (keys[i] - keys[i - 1]))[j];
+                            }
+                        }
+                       
                     }
                     else {
                         p(i, j) = (3.0f * (keys[i + 1] - keys[i - 1]))[j];
@@ -81,6 +128,11 @@ public:
 
             }
 
+            for (int i = 0; i < keys.size(); i++) {
+                for (int j = 0; j < 3; j++) {
+                    std::cout << "now p values" << p(i, j) << std::endl;
+                }
+            }
 
 
             pPrime = A.inverse() * p;
@@ -93,7 +145,7 @@ public:
 
         }
 
-    }
+    
         
        
     
