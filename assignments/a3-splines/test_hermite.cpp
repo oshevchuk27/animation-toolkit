@@ -14,6 +14,8 @@ int main()
    keys.push_back(vec3(8,0,0));
 
    InterpolatorHermite hermite;
+   hermite.setClamped(true);
+   hermite.setClampedDirection(vec3(1.0, 0.0, 0.0));
    hermite.computeControlPoints(keys);
 
    // todo: print the control points in hemite
