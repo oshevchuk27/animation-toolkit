@@ -30,6 +30,21 @@ From the above gif, we can see that the output for the control points and interp
 
 From the above gif, we can see that the output for the spline interpolation values is as expected.
 
+5. Curve editor
+
+![draw_spline](https://user-images.githubusercontent.com/60118869/135711586-83f092d7-feda-488d-85f5-980860436b74.gif)
+
+
+The above gif draws linear, catmull-rom and hermite splines, gives an option to see the control points and edit the curve using control points. It also shows both clamped and natural versions of hermite spline.
+
+
+6. Unique (glittery star)
+
+
+ 
+
+
+
 
 
 
