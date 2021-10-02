@@ -13,3 +13,16 @@ From the above gif, we can see that the output for the control points and interp
 ![test_catmullrom](https://user-images.githubusercontent.com/60118869/135710626-00efaa5d-bdb3-4ad1-8a1b-eab2fb9af88a.gif)
 
 From the above gif, we can see that the output for the control points and interpolation values of Catmull - Rom splines is as expected.
+
+3. Hermite splines
+
+
+![test_hemite](https://user-images.githubusercontent.com/60118869/135710787-dc646ae2-e975-4fb4-8b71-dce0005a7d97.gif)
+
+
+From the above gif, we can see that the output for the control points and interpolation values of Hermite splines is as expected.
+
+
+
+
+
