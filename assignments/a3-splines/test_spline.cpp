@@ -19,7 +19,7 @@ int main() {
    spline.addInterpolationType("Hermite", &hermite);
    spline.addInterpolationType("CatmullRom", &catmullrom);
 
-   spline.setInterpolationType("Linear");
+   spline.setInterpolationType("Linear");   
 
    // test with empty values
    std::cout << "\n-------------------------------\n";
