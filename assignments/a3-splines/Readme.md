@@ -40,6 +40,11 @@ The above gif draws linear, catmull-rom and hermite splines, gives an option to 
 
 6. Unique (glittery star)
 
+![unique](https://user-images.githubusercontent.com/60118869/135711798-27cdc8f3-b435-45ea-a38d-32c7fd4693e6.gif)
+
+The above gif shows a glittery star drawn using linear, Catmull-Rom and Hermite splines. The color of the star is interpolated using a Catmull-Rom spline giving a glitter effect.
+
+
 
  
 
