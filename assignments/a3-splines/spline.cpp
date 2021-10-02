@@ -4,139 +4,136 @@
 #include "interpolator_linear.h"
 
 // global interpolator to use as default
-static InterpolatorLinear gDefaultInterpolator; 
+static InterpolatorLinear gDefaultInterpolator;
 
-Spline::Spline() : 
-  mDirty(true),
-  mInterpolator(&gDefaultInterpolator) {
+Spline::Spline() :
+	mDirty(true),
+	mInterpolator(&gDefaultInterpolator) {
 }
 
 Spline::~Spline() {
 }
 
 void Spline::addInterpolationType(const std::string& name, Interpolator* interp) {
-  mInterpolators[name] = interp;
+	mInterpolators[name] = interp;
 }
 
 void Spline::setInterpolationType(const std::string& name) {
-  assert(mInterpolators.count(name) != 0);
-  mInterpolator = mInterpolators[name];
-  mDirty = true;
+	assert(mInterpolators.count(name) != 0);
+	mInterpolator = mInterpolators[name];
+	mDirty = true;
 }
 
 const std::string& Spline::getInterpolationType() const {
-  return mInterpolator->getType();
+	return mInterpolator->getType();
 }
 
 void Spline::editKey(int keyID, const glm::vec3& value) {
-  assert(keyID >= 0 && keyID < (int) mKeys.size());
-  mKeys[keyID] = value;
-  mDirty = true;
+	assert(keyID >= 0 && keyID < (int)mKeys.size());
+	mKeys[keyID] = value;
+	mDirty = true;
 }
 
 int Spline::appendKey(float time, const glm::vec3& value) {
-  mKeys.push_back(value);
-  mTimes.push_back(time);
-  mDirty = true;
-  return mKeys.size();
+	mKeys.push_back(value);
+	mTimes.push_back(time);
+	mDirty = true;
+	return mKeys.size();
 }
 
 void Spline::deleteKey(int keyID) {
-  assert(keyID >= 0 && keyID < (int) mKeys.size());
-  mKeys.erase(mKeys.begin() + keyID);
-  mTimes.erase(mTimes.begin() + keyID);
-  mDirty = true;
+	assert(keyID >= 0 && keyID < (int)mKeys.size());
+	mKeys.erase(mKeys.begin() + keyID);
+	mTimes.erase(mTimes.begin() + keyID);
+	mDirty = true;
 }
 
 glm::vec3 Spline::getKey(int keyID) const {
-  assert(keyID >= 0 && keyID < (int) mKeys.size());
-  return mKeys[keyID];
+	assert(keyID >= 0 && keyID < (int)mKeys.size());
+	return mKeys[keyID];
 }
 
 float Spline::getTime(int keyID) const {
-  assert(keyID >= 0 && keyID < (int) mKeys.size());
-  return mTimes[keyID];
+	assert(keyID >= 0 && keyID < (int)mKeys.size());
+	return mTimes[keyID];
 }
 
 int Spline::getNumKeys() const {
-  return (int) mKeys.size();
+	return (int)mKeys.size();
 }
 
 void Spline::clear() {
-  mKeys.clear();
-  mTimes.clear();
-  mInterpolator->clearControlPoints();
+	mKeys.clear();
+	mTimes.clear();
+	mInterpolator->clearControlPoints();
 }
 
 float Spline::getDuration() const {
-  if (mKeys.size() == 0) return 0;
-  int lastIdx = mKeys.size() - 1;
-  return mTimes[lastIdx];
+	if (mKeys.size() == 0) return 0;
+	int lastIdx = mKeys.size() - 1;
+	return mTimes[lastIdx];
 }
 
 int Spline::getNumControlPoints() const {
-  return mInterpolator->getNumControlPoints();
+	return mInterpolator->getNumControlPoints();
 }
 
+
 const glm::vec3& Spline::getControlPoint(int id) const {
-  return mInterpolator->getControlPoint(id);
+	return mInterpolator->getControlPoint(id);
 }
 
 int Spline::getNumSegments() const {
-  if (mKeys.size() > 1) return mKeys.size()-1;
-  return 0;
+	if (mKeys.size() > 1) return mKeys.size() - 1;
+	return 0;
 }
 
 void Spline::computeControlPoints() {
-  mInterpolator->computeControlPoints(mKeys);
+	mInterpolator->computeControlPoints(mKeys);
 }
 
 void Spline::editControlPoint(int id, const glm::vec3& v) {
-  mInterpolator->editControlPoint(id, v);
+	mInterpolator->editControlPoint(id, v);
 }
 
 glm::vec3 Spline::getValue(float t) const {
-  if (mDirty) 
-  {
-    mInterpolator->computeControlPoints(mKeys);
-    mDirty = false;
-  }
+	if (mDirty)
+	{
+		mInterpolator->computeControlPoints(mKeys);
+		mDirty = false;
+	}
 
-  glm::vec3 value;
+	glm::vec3 value;
 
-  // todo: your code here
-  // compute the segment containing t
-  // compute the value [0, 1] along the segment for interpolation
+	// todo: your code here
+	// compute the segment containing t
+	// compute the value [0, 1] along the segment for interpolation
 
-  if (mKeys.size() == 0) {
-      value = glm::vec3(0);
-  }
-  else {
-      if (t < getTime(0)) {
-          value = mKeys[0];
-      }
-      else if (t > getTime(mKeys.size() - 1)) {
-          value = mKeys[mKeys.size() - 1];
-      }
-      else {
-          int segment = 0;
-          float u = 0;
-          for (int i = 0; i < mKeys.size() - 1; i++) {
-              if (t >= getTime(i) && t <= getTime(i + 1)) {
-                  segment = i;
-                  // computing normalized time
-                  u = (t - getTime(i)) / (getTime(i + 1) - getTime(i));
-              }
-          }
+	if (mKeys.size() == 0) {
+		value = glm::vec3(0);
+	}
+	else {
+		if (t < getTime(0)) {
+			t = getTime(0);
+		}
+		else if (t > getTime(mKeys.size() - 1)) {
+			t = getTime(mKeys.size() - 1);
+		}
+		int segment = 0;
+		float u = 0;
+		for (int i = 0; i < mKeys.size() - 1; i++) {
+			if (t >= getTime(i) && t <= getTime(i + 1)) {
+				segment = i;
+				// computing normalized time
+				u = (t - getTime(i)) / (getTime(i + 1) - getTime(i));
+			}
+		}
 
 
-          value = mInterpolator -> interpolate(segment, u);
-      }
+		value = mInterpolator->interpolate(segment, u);
 
-      
+	}
 
-  }
-  
-  return value; 
+	return value;
 }
 
