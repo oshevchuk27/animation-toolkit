@@ -22,6 +22,14 @@ From the above gif, we can see that the output for the control points and interp
 
 From the above gif, we can see that the output for the control points and interpolation values of Hermite splines is as expected.
 
+4. Spline
+
+
+![test_spline](https://user-images.githubusercontent.com/60118869/135710880-8132e36e-64e2-4889-b8a0-1666641f7151.gif)
+
+
+From the above gif, we can see that the output for the spline interpolation values is as expected.
+
 
 
 
