@@ -24,7 +24,12 @@ public:
     }
 
     virtual void computeControlPoints(const std::vector<glm::vec3>& keys) {
+
+        if (keys.size() < 2) {
+            return;
+        }
        
+        mCtrlPoints.clear();
        // todo: your code here
         for (int i = 0; i < keys.size(); i++) {
             mCtrlPoints.push_back(keys[i]);
