@@ -32,12 +32,18 @@ void CurveEditor::scene() {
 
 	drawState();
 	// todo: your code here
+	
 	// draw the keys
-	for (int i = 0; i < mSpline.getNumKeys(); i++)
-	{
-		setColor(vec3(0, 0, 1));
-		drawSphere(mSpline.getKey(i), 5);
+	if (!mShowControlPoints) {
+
+		for (int i = 0; i < mSpline.getNumKeys(); i++)
+		{
+			setColor(vec3(0, 0, 1));
+			drawSphere(mSpline.getKey(i), 5);
+		}
+
 	}
+	
 
 	// interpolate between the keys
 	for (float i = 0.0f; i < mSpline.getDuration(); i += 0.001f) {
@@ -72,9 +78,6 @@ void CurveEditor::scene() {
 
 	}
 }
-
-
-
 
 
   void CurveEditor::addPoint(const vec3 & p) {
@@ -245,6 +248,8 @@ void CurveEditor::scene() {
 		  mHermite.setClamped(!mHermite.isClamped());
 		  mSpline.computeControlPoints();
 	  }
+
+
   }
 
   int main(int argc, char** argv)
