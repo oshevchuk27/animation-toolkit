@@ -122,18 +122,14 @@ Vector3 Matrix3::toEulerAnglesYZX() const
 	double beta = asin(m_yzx[1][0]);
 	double alpha, theta;
 
-	if (beta == PI / 2) {
+	if (beta == PI / 2 || beta == -PI / 2) {
 		alpha = 0;
-		theta = -atan2(m_yzx[2][1], m_yzx[2][2]);
-	}
-	else if (beta == -PI / 2) {
-		alpha = 0;
-		theta = atan2(m_yzx[2][1], m_yzx[2][2]);
+		theta = atan2(m_yzx[0][2], m_yzx[2][2]);
 	}
 	else {
 
 		alpha = -atan2(m_yzx[1][2], m_yzx[1][1]);
-		theta = atan2(m_yzx[2][0], m_yzx[0][0]);
+		theta = -atan2(m_yzx[2][0], m_yzx[0][0]);
 
 	}
 
@@ -174,11 +170,15 @@ Vector3 Matrix3::toEulerAnglesZYX() const
 
 	double alpha, beta;
 
-	double theta = asin(-m_zyx[2][0]);
+	double theta = - asin(m_zyx[2][0]);
 
-	if (theta == PI / 2 || theta == -PI/2) {
+	if (theta == PI / 2) {
 		beta = 0;
 		alpha = atan2(m_zyx[0][1], m_zyx[0][2]);
+	}
+	else if (theta == -PI / 2) {
+		beta = 0;
+		alpha = -atan2(m_zyx[0][1], m_zyx[1][1]);
 	}
 	else {
 
