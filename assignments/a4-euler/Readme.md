@@ -13,7 +13,8 @@ Above, we can see a grid of rotating teapots. We rotate the teapots by adjusting
 2. Unique (rotating spiral)
 
 
-https://user-images.githubusercontent.com/60118869/136729115-123d681c-6851-4f51-99db-fa5f57460387.mp4
+https://user-images.githubusercontent.com/60118869/136729265-b2a47a64-5606-4ba0-8efc-496c03e55c0a.mp4
+
 
 Above, we can see a spiral moving in a circle and changing its color based on its position. It also rotates around x, y and z axes. The rotation around those axes is controlled by keyboard input.
 
