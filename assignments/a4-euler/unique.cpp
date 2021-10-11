@@ -47,7 +47,6 @@ public:
 
 		Vector3 anglesinRad = euler * Deg2Rad;
 
-		// drawing a spiral
 		float px = r * cos(theta1) + 0.5 * width();
 		float py = r * sin(theta1) + 0.5 * height();
 
