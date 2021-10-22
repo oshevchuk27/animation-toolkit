@@ -13,9 +13,16 @@ namespace atkmath {
 	void Quaternion::toAxisAngle(Vector3& axis, double& angleRad) const
 	{
 		angleRad = 2 * acos(mW);
-		axis[0] = mX / (sin(angleRad / 2));
-		axis[1] = mY / (sin(angleRad / 2));
-		axis[2] = mZ / (sin(angleRad / 2));
+		// edge case
+		if (angleRad == 0) {
+			axis = Vector3(1, 0, 0);
+		}
+		else {
+			axis[0] = mX / (sin(angleRad / 2));
+			axis[1] = mY / (sin(angleRad / 2));
+			axis[2] = mZ / (sin(angleRad / 2));
+		}
+
 
 	}
 
@@ -50,12 +57,12 @@ namespace atkmath {
 
 	void Quaternion::fromMatrix(const Matrix3& rot)
 	{
-		float xSquare = (1 / 4.0) * (1 + rot[0][0] - rot[1][1] - rot[2][2]);
-		float ySquare = (1 / 4.0) * (1 - rot[0][0] + rot[1][1] - rot[2][2]);
-		float zSquare = (1 / 4.0) * (1 - rot[0][0] - rot[1][1] + rot[2][2]);
-		float wSquare = (1 / 4.0) * (rot[0][0] + rot[1][1] + rot[2][2] + 1);
+		double xSquare = (1 / 4.0) * (1 + rot[0][0] - rot[1][1] - rot[2][2]);
+		double ySquare = (1 / 4.0) * (1 - rot[0][0] + rot[1][1] - rot[2][2]);
+		double zSquare = (1 / 4.0) * (1 - rot[0][0] - rot[1][1] + rot[2][2]);
+		double wSquare = (1 / 4.0) * (rot[0][0] + rot[1][1] + rot[2][2] + 1);
 
-		float max;
+		double max;
 
 		if (xSquare > ySquare && xSquare > zSquare && xSquare > wSquare) {
 			max = xSquare;
@@ -72,27 +79,27 @@ namespace atkmath {
 
 		if (xSquare == max) {
 			mX = sqrt(xSquare);
-			mW = 1 / (4 * mX) * (rot[2][1] - rot[1][2]);
-			mZ = 1 / (4 * mW) * (rot[1][0] - rot[0][1]);
-			mY = 1 / (4 * mW) * (rot[0][2] - rot[2][0]);
+			mW = (1 / (4 * mX)) * (rot[2][1] - rot[1][2]);
+			mZ = (1 / (4 * mW)) * (rot[1][0] - rot[0][1]);
+			mY = (1 / (4 * mW)) * (rot[0][2] - rot[2][0]);
 		}
 		else if (ySquare == max) {
 			mY = sqrt(ySquare);
-			mW = 1 / (4 * mY) * (rot[0][2] - rot[2][0]);
+			mW = (1 / (4 * mY)) * (rot[0][2] - rot[2][0]);
 			mX = 1 / (4 * mW) * (rot[2][1] - rot[1][2]);
-			mZ = 1 / (4 * mW) * (rot[1][0] - rot[0][1]);
+			mZ = (1 / (4 * mW)) * (rot[1][0] - rot[0][1]);
 		}
 		else if (zSquare == max) {
 			mZ = sqrt(zSquare);
-			mX = 1 / (4 * mZ) * (rot[0][2] - rot[2][0]);
-			mY = 1 / (4 * mX) * (rot[1][0] + rot[0][1]);
-			mW = 1 / (4 * mX) * (rot[2][1] - rot[1][2]);
+			mW = (1 / (4 * mZ)) * (rot[1][0] - rot[0][1]);
+			mX = (1 / (4 * mW)) * (rot[2][1] - rot[1][2]);
+			mY = (1 / (4 * mW)) * (rot[0][2] - rot[2][0]);
 		}
 		else {
 			mW = sqrt(wSquare);
-			mX = 1 / (4 * mW) * (rot[2][1] - rot[1][2]);
-			mY = 1 / (4 * mW) * (rot[0][2] - rot[2][0]);
-			mZ = 1 / (4 * mW) * (rot[1][0] - rot[0][1]);
+			mX = (1 / (4 * mW)) * (rot[2][1] - rot[1][2]);
+			mY = (1 / (4 * mW)) * (rot[0][2] - rot[2][0]);
+			mZ = (1 / (4 * mW)) * (rot[1][0] - rot[0][1]);
 		}
 
 	}
