@@ -62,7 +62,7 @@ namespace atkmath {
 		double zSquare = (1 / 4.0) * (1 - rot[0][0] - rot[1][1] + rot[2][2]);
 		double wSquare = (1 / 4.0) * (rot[0][0] + rot[1][1] + rot[2][2] + 1);
 
-		double max;
+		double max = 0;
 
 		if (xSquare > ySquare && xSquare > zSquare && xSquare > wSquare) {
 			max = xSquare;
