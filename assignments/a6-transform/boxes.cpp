@@ -42,18 +42,20 @@ public:
       drawBox(F30);
 
       // Question 2
-      Transform F21 = Transform::Identity; // transform from frame 2 to frame 1
+      Transform F21 = F10.inverse()*F20; // transform from frame 2 to frame 1
       vec3 value = F21.transformPoint(vec3(0));
       if (!once) std::cout << "Position of b2 relative to b1 is " << value << std::endl;
 
       // Question 3
-      Transform F32 = Transform::Identity; // transform from frame 3 to frame 2
+      Transform F32 = F20.inverse()*F30; // transform from frame 3 to frame 2
       value = F32.transformPoint(vec3(0));
       if (!once) std::cout << "Position of b3 relative to b2 is " << value << std::endl;
 
       // Question 4
       // Compute a series of transforms that stack Box 2 onto Box 1
-      Transform F = Transform::Identity;
+      Transform transform(glm::angleAxis(0.f, vec3(1, 0, 0)), vec3(0, 2, 0));
+      Transform F = transform * F10 * F20.inverse();
+
       setColor(vec3(0.5, 0.5,0.5));
       drawBox(F * F20);
 
