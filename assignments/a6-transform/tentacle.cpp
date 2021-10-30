@@ -3,6 +3,7 @@
 using namespace atk;
 using glm::vec3;
 
+
 class Tentacle : public atkui::Framework {
 public:
    Tentacle() : atkui::Framework(atkui::Perspective) {}
@@ -32,9 +33,6 @@ public:
       joint4->setLocalTranslation(vec3(0,50,0));
       _tentacle.addJoint(joint4, joint3);
 
-      Joint* joint5 = new Joint("joint5");
-      joint5->setLocalTranslation(vec3(0,50,0));
-      _tentacle.addJoint(joint5, joint4);
 
       _tentacle.fk(); // compute local2global transforms
 
@@ -44,6 +42,7 @@ public:
    {
       // todo animate joints
       // hint: use glm::angleAxis(...) to compute quaternions for each joint
+
       _tentacle.fk(); // computes local2global transforms
       setColor(vec3(0,1,0));
 
@@ -53,6 +52,7 @@ public:
               //continue;
           //}
           Joint* parent = _tentacle.getByID(i);
+          parent->setLocalRotation(glm::angleAxis(sin(1.5f * elapsedTime() +  i), vec3(0, 0, 1)));
           Joint* child = _tentacle.getByID(i+1);
           vec3 globalParentPos = parent->getGlobalTranslation();
           vec3 globalPos = child->getGlobalTranslation();
