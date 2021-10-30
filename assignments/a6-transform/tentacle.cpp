@@ -21,19 +21,19 @@ public:
 
       // todo: add more joints
       Joint* joint2 = new Joint("joint2");
-      joint2->setLocalTranslation(vec3(0, 50, 0));
+      joint2->setLocalTranslation(vec3(0,50,0));
       _tentacle.addJoint(joint2, joint1);
 
       Joint* joint3 = new Joint("joint3");
-      joint3->setLocalTranslation(vec3(0, 50, 0));
+      joint3->setLocalTranslation(vec3(0,50,0));
       _tentacle.addJoint(joint3, joint2);
 
       Joint* joint4 = new Joint("joint4");
-      joint4->setLocalTranslation(vec3(0, 50, 0));
+      joint4->setLocalTranslation(vec3(0,50,0));
       _tentacle.addJoint(joint4, joint3);
 
       Joint* joint5 = new Joint("joint5");
-      joint5->setLocalTranslation(vec3(0, 50, 0));
+      joint5->setLocalTranslation(vec3(0,50,0));
       _tentacle.addJoint(joint5, joint4);
 
       _tentacle.fk(); // compute local2global transforms

@@ -8,16 +8,10 @@ namespace atkmath {
 
 	Quaternion Quaternion::Slerp(const Quaternion& q0, const Quaternion& q1, double t)
 	{
+		float omega = acos(q0[0] * q1[0] + q0[1] * q1[1] + q0[2] * q1[2] + q0[3] * q1[3]);
+		Quaternion q = (sin(omega * (1 - t)) / sin(omega)) * q0 + (sin(omega * t) / sin(omega)) * q1;
+		return q;
 
-		float omega = acos(q0[0]*q1[0] + q0[1]*q1[1] + q0[2]*q1[2] + q0[3]*q1[3]);
-		omega = glm::clamp(omega, -1.0f, 1.0f);
-
-		if (omega == 0) {
-			return q0;
-		} else {
-			Quaternion q = (sin(omega * (1 - t)) / sin(omega)) * q0 + (sin(omega * t) / sin(omega)) * q1;
-			return q;
-		}
 	}
 
 	void Quaternion::toAxisAngle(Vector3& axis, double& angleRad) const
