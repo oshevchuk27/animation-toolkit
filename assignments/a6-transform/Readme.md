@@ -22,7 +22,8 @@ We can see that boxes are at their expected positions.
 
 Positions of boxes relative to other boxes output:
 
-<img width="477" alt="Capture_3" src="https://user-images.githubusercontent.com/60118869/139561289-fc87ac9f-5f35-44f5-a48e-1ec48d9863cd.PNG">
+![image](https://user-images.githubusercontent.com/60118869/139784791-e8066bb3-0640-4647-b409-676d47d75e5a.png)
+
 
 3. Skeleton
 
