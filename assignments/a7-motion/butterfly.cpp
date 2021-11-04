@@ -27,9 +27,7 @@ public:
 
       skeleton.fk();
 
-      drawX = false;
-      drawY = false;
-      drawZ = false;
+      
    }
 
    void scene() {
@@ -71,15 +69,13 @@ public:
       push();
       transform(B);
 
-      if (drawX && !(drawY) && !(drawZ)) {
+      if(drawAxes) {
           setColor(vec3(1, 0, 0));
-          drawEllipsoid(vec3(-100, 0, 0), vec3(100, 0, 0), 10);
-      }
-      else if (drawY && !(drawX) && !(drawZ)) {
+          drawEllipsoid(vec3(-500, 0, 0), vec3(500, 0, 0), 10);
+      
           setColor(vec3(0, 1, 0));
-          drawEllipsoid(vec3(0, -100, 0), vec3(0, 100, 0), 10);
-      }
-      else if (drawZ && !(drawX) && !(drawY)) {
+          drawEllipsoid(vec3(0, -500, 0), vec3(0, 500, 0), 10);
+     
           setColor(vec3(0, 0, 1));
           drawEllipsoid(vec3(0, 0, -500), vec3(0, 0, 500), 10);
       }
@@ -106,29 +102,16 @@ public:
    virtual void keyUp(int key, int mods) {
 
        if (key == '1') {
-           drawX = true;
-           drawY = false;
-           drawZ = false;
+           drawAxes = true;
 
-       }
-       else if (key == '2') {
-           drawY = true;
-           drawX = false;
-           drawZ = false;
-       }
-       else if (key == '3') {
-           drawZ = true;
-           drawX = false;
-           drawY = false;
        }
 
    }
 
 private:
    Skeleton skeleton;
-   bool drawX;
-   bool drawY;
-   bool drawZ;
+   bool drawAxes = false;
+ 
 
 };
 
