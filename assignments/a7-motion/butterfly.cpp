@@ -26,6 +26,10 @@ public:
       skeleton.addJoint(rwing, body);
 
       skeleton.fk();
+
+      drawX = false;
+      drawY = false;
+      drawZ = false;
    }
 
    void scene() {
@@ -63,6 +67,26 @@ public:
       drawSphere(vec3(0), 1);
       pop();
 
+      setColor(vec3(1));
+      push();
+      transform(B);
+
+      if (drawX && !(drawY) && !(drawZ)) {
+          setColor(vec3(1, 0, 0));
+          drawEllipsoid(vec3(-100, 0, 0), vec3(100, 0, 0), 10);
+      }
+      else if (drawY && !(drawX) && !(drawZ)) {
+          setColor(vec3(0, 1, 0));
+          drawEllipsoid(vec3(0, -100, 0), vec3(0, 100, 0), 10);
+      }
+      else if (drawZ && !(drawX) && !(drawY)) {
+          setColor(vec3(0, 0, 1));
+          drawEllipsoid(vec3(0, 0, -500), vec3(0, 0, 500), 10);
+      }
+
+      pop();
+
+
       setColor(vec3(0.8, 0, 0.0));
       push();
       transform(LT * lwingGeometry);
@@ -74,10 +98,38 @@ public:
       transform(RT * rwingGeometry);
       drawSphere(vec3(0), 1);
       pop();
+
+      
+
+   }
+
+   virtual void keyUp(int key, int mods) {
+
+       if (key == '1') {
+           drawX = true;
+           drawY = false;
+           drawZ = false;
+
+       }
+       else if (key == '2') {
+           drawY = true;
+           drawX = false;
+           drawZ = false;
+       }
+       else if (key == '3') {
+           drawZ = true;
+           drawX = false;
+           drawY = false;
+       }
+
    }
 
 private:
    Skeleton skeleton;
+   bool drawX;
+   bool drawY;
+   bool drawZ;
+
 };
 
 
