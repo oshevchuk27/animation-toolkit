@@ -57,8 +57,8 @@ public:
    }
 
    virtual float randValue() {
-       float randValue = -0.5 + (float) ((rand()) %
-           (1 + 1));
+       float randValue = -30 + (float) ((rand()) %
+           (30 + 30 + 1));
        return randValue;
    }
 

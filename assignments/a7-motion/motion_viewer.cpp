@@ -11,24 +11,30 @@ public:
    MotionViewer() : atkui::Framework(atkui::Perspective) {
    }
 
-   MotionViewer(std::string filename) : atkui::Framework(atkui::Perspective) {
-       filename = filename;
-   }
 
    void setFileName(std::string filename) {
        filename = filename;
+       BVHReader reader;
+       reader.load(filename, skeleton, motion);
+
+       motion.update(skeleton, 0);
    }
 
    void setup() {
-      BVHReader reader;
-      reader.load(filename, skeleton, motion);
-    
-      motion.update(skeleton, 0);
+      
    }
 
    void scene() {
-      time += dt();
-      motion.update(skeleton, time);
+     
+
+      if (!paused) {
+
+          time += dt() * timeScale;
+          motion.update(skeleton, time);
+
+         
+      }
+     
 
       setColor(vec3(0,0,0.8));
       for (int i = 0; i < skeleton.getNumJoints(); i++) {
@@ -63,9 +69,14 @@ public:
            }
        }
        else if (key == ']') {
-           timeScale += 1;
+           timeScale += 0.1;
+
        }
-   }
+       else if (key == '[') {
+           timeScale -= 0.1;
+         
+       }
+   } 
 
 private:
    Skeleton skeleton;
@@ -84,10 +95,10 @@ int main(int argc, char** argv) {
     MotionViewer viewer;
  
    if (argc == 1) {
-       viewer.setFileName("");
+       viewer.setFileName("../motions/Beta/jump.bvh");
    }
    else {
-       viewer.setFileName(argv[0]);
+       viewer.setFileName(argv[1]);
    }
 
    viewer.run();

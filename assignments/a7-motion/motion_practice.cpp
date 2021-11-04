@@ -42,22 +42,8 @@ int main(int argc, char** argv)
    Joint* hand = skeleton.getByName("Beta:LeftHand");
    int id = hand->getID();
    quat quaternion = frame5.jointRots[hand->getID()];
-
-   std::cout << glm::to_string(quaternion) << std::endl;
-
-   Quaternion q = Quaternion(quaternion[0], quaternion[1], quaternion[2], quaternion[3]);
-   atkmath::Matrix3 matrix = q.toMatrix();
-
-   vec3 column1 = vec3(matrix[0][0], matrix[1][0], matrix[2][0]);
-   vec3 column2 = vec3(matrix[0][1], matrix[1][1], matrix[2][1]);
-   vec3 column3 = vec3(matrix[0][1], matrix[1][2], matrix[2][2]);
-
-
-
-   glm::mat3 new_matrix = mat3(column1, column2, column3);
-  
    
-   vec3 eulerXYZ = extractEulerAngleRO(RotOrder::XYZ, new_matrix);
+   vec3 eulerXYZ = extractEulerAngleRO(RotOrder::XYZ, mat3(quaternion));
    std::cout << "The local rotation of the left hand on frame 5 is: " << glm::to_string(eulerXYZ) << std::endl;
 
    // What is the speed of the character?
