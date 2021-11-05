@@ -20,15 +20,6 @@ public:
 
       vec3 position = vec3(-225, 0, -225);
      
-      /*for (int i = 0; i < 3; i++) {
-          for (int j = 0; j < 4; j++) {
-              _devil = Devil(position, color, size);
-              devils.push_back(_devil);
-              position.z += 150;
-          }
-          position.z = -225;
-          position.x += 225;
-     }*/
 
       // jittering positions
       for (int i = 0; i < 3; i++) {
@@ -57,8 +48,8 @@ public:
    }
 
    virtual float randValue() {
-       float randValue = -30 + (float) ((rand()) %
-           (30 + 30 + 1));
+       float randValue = -50 + (float) ((rand()) %
+           (50 + 50 + 1));
        return randValue;
    }
 
