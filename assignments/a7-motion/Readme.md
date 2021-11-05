@@ -1,7 +1,11 @@
 # Readme
 
-TODO: Replace this text with
+1. Motion Practice
 
-* images, gifs, videos
-* brief description of what each image/gif/video shows
+![image](https://user-images.githubusercontent.com/60118869/140584476-ee0db6f2-07cf-4843-8185-c70bf93d1e45.png)
+
+We can see that the values above match those expected.
+
+2. Motion viewer
+
 
