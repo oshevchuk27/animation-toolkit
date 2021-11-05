@@ -46,9 +46,10 @@ public:
 
 		push();
 
-		translate(-tail.pivot);
-		rotate(tail.rotation, vec3(0, 0, 1));
 		translate(vec3(-110, -110, -60));
+		rotate(tail.rotation, vec3(0, 0, 1));
+		
+		translate(-tail.pivot);
 
 		drawSprite(tail);
 
