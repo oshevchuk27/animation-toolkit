@@ -45,42 +45,27 @@ public:
 
 
 		push();
-
 		translate(vec3(-110, -110, -60));
 		rotate(tail.rotation, vec3(0, 0, 1));
-		
 		translate(-tail.pivot);
-
 		drawSprite(tail);
-
-
 		pop();
 
 
 		// arm1
 		push();
-
 		translate(vec3(50, 7, -20));
-	
 		rotate(arm1.rotation, vec3(0, 0, 1));
-
 		translate(-arm1.pivot);
-		
-
-
 		drawSprite(arm1);
 		pop();
 
 
 		// leg2
 		push();
-
-		
 		translate(vec3(53, -120, -10));
 		rotate(leg2.rotation, vec3(0, 0, 1));
 		translate(-leg2.pivot);
-		
-
 		drawSprite(leg2);
 		pop();
 
