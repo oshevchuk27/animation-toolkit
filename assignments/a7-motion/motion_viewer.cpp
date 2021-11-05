@@ -58,6 +58,7 @@ public:
            paused = !paused;
        }
        else if (key == '0') {
+           time = 0;
            currentFrame = 0;
            skeleton.setPose(motion.getKey(currentFrame));
        }
@@ -92,6 +93,7 @@ private:
    int currentFrame = 0; 
    bool paused = false;
    float time = 0;
+   bool setToZero = false;
 
 };
 
