@@ -21,6 +21,8 @@ public:
    }
 
    void setup() {
+
+       
       
    }
 
@@ -31,10 +33,10 @@ public:
 
           time += dt() * timeScale;
           motion.update(skeleton, time);
-
-         
+          currentFrame = motion.getKeyID(time);
+          
       }
-     
+      
 
       setColor(vec3(0,0,0.8));
       for (int i = 0; i < skeleton.getNumJoints(); i++) {
@@ -57,15 +59,18 @@ public:
        }
        else if (key == '0') {
            currentFrame = 0;
+           skeleton.setPose(motion.getKey(currentFrame));
        }
        else if (key == '.') {
-           if (paused == true) {
+           if (paused) {
                currentFrame = (currentFrame + 1) % motion.getNumKeys();
+               skeleton.setPose(motion.getKey(currentFrame));
            }
        }
        else if (key == ',') {
-           if (paused == true) {
-               currentFrame = (currentFrame - 1) % motion.getNumKeys();
+           if (paused) {
+               currentFrame = (currentFrame - 1 + motion.getNumKeys()) % motion.getNumKeys();
+               skeleton.setPose(motion.getKey(currentFrame));
            }
        }
        else if (key == ']') {
@@ -87,6 +92,7 @@ private:
    int currentFrame = 0; 
    bool paused = false;
    float time = 0;
+
 };
 
 
