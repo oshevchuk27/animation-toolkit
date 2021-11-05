@@ -40,7 +40,6 @@ int main(int argc, char** argv)
    // Hint: use the skeleton to get the ID for the hand
    // Hint: use extractEulerAngleRO (defined in atk/glmmath.h)
    Joint* hand = skeleton.getByName("Beta:LeftHand");
-   int id = hand->getID();
    quat quaternion = frame5.jointRots[hand->getID()];
    
    vec3 eulerXYZ = extractEulerAngleRO(RotOrder::XYZ, mat3(quaternion));
