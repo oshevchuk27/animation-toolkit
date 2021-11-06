@@ -35,6 +35,14 @@ The above illustartes the butterfly moving in a circle. The wings are animated. 
 5. Paper doll
 
 
+https://user-images.githubusercontent.com/60118869/140592935-96686519-2fa4-4154-a98e-6e504ca922e3.mp4
+
+The above illustrates a squirrel animated using a paper doll technique. The choice of body parts is controlled by keys on the keyboard. When a body part is chosen, it can be rotated around its pivot using keyboard keys.
+
+6. Unique
+
+
+
 
 
 
