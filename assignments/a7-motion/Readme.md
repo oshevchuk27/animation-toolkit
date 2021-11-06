@@ -39,7 +39,14 @@ https://user-images.githubusercontent.com/60118869/140592935-96686519-2fa4-4154-
 
 The above illustrates a squirrel animated using a paper doll technique. The choice of body parts is controlled by keys on the keyboard. When a body part is chosen, it can be rotated around its pivot using keyboard keys.
 
-6. Unique
+6. Unique (An Elf)
+
+
+https://user-images.githubusercontent.com/60118869/140593068-9e28fc65-0ad7-40da-b2d7-fdd48718945b.mp4
+
+The above illustartes an elf animated using a paper doll technique. The choice of body parts is controlled by keys on the keyboard. When a body part is chosen, it can be rotated around its pivot using keyboard keys. A character is able to change emotions controlled by keyboard keys.
+
+
 
 
 
