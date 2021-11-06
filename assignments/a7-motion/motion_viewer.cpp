@@ -79,7 +79,10 @@ public:
 
        }
        else if (key == '[') {
-           timeScale -= 0.1;
+           if (timeScale > 0) {
+               timeScale -= 0.1;
+           }
+          
          
        }
    } 
