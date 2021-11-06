@@ -9,7 +9,8 @@ We can see that the values above match those expected.
 2. Motion viewer
 
 
-https://user-images.githubusercontent.com/60118869/140592295-68d68a98-9268-4e14-b646-ac1a4c78882f.mp4
+https://user-images.githubusercontent.com/60118869/140593912-915633dc-5207-4bfd-a9cf-0092ac453d26.mp4
+
 
 The above illustrates the default behaviour of the program: it reads in the motion from the jump BVH file. All the requirements are satisfied
 
