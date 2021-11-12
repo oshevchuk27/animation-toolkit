@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cmath>
 #include <string>
+#include "atkmath/constants.h"
 
 using namespace glm;
 using namespace atk;
@@ -34,8 +35,32 @@ public:
       result.setFramerate(motion.getFramerate());
 
       // todo: your code here
-      Pose pose = motion.getKey(0);
-      result.appendKey(pose);
+      // multiply the transform times the root position of our motion
+      for (int i = 0; i < motion.getNumKeys(); i++) {
+          Pose pose = motion.getKey(i);
+          Transform T1;
+          Transform T_desired(glm::angleAxis(heading, vec3(0, 1, 0)), pos);
+          Transform T_orig;
+          Transform T_new;
+          
+          if (i == 0) {
+             T1 = Transform (glm::angleAxis(0.f, vec3(0, 1, 0)), -pose.rootPos);
+             T_orig = T_desired;
+             T_new = T_desired * T1 * T_orig;
+             pose.rootPos = T_new.t();
+             pose.jointRots[i] = T_new.r();
+
+
+          }
+          else {
+              T_orig = Transform(pose.jointRots[_skeleton.getRoot()->getID()], pose.rootPos);
+              T_new = T_desired * T1 * T_orig;
+              pose.rootPos = T_new.t();
+              pose.jointRots[i] = T_new.r();
+          }
+          result.appendKey(pose);
+      }
+      
       
       return result;
    }
@@ -57,13 +82,13 @@ public:
    {
       if (key == GLFW_KEY_LEFT)
       {
-         _heading += M_PI/8;
+         _heading += atkmath::PI/8;
          _reoriented = reorient(_motion, _offset, _heading);
          _time = 0;
       }
       else if (key == GLFW_KEY_RIGHT)
       {
-         _heading -= M_PI/8;
+         _heading -= atkmath::PI/8;
          _reoriented = reorient(_motion, _offset, _heading);
          _time = 0;
       }
