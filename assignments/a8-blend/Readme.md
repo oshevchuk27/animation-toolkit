@@ -24,7 +24,9 @@ When pressing 0, we can see the original motion of the character, when pressing 
 
 We can see that the character is placed at a new position and orientation each time some key is pressed.
 
-5. Unique. A character drinking soda and jumping jacks, jogging, doing squats, side twists and stretches at the same time (the upper body motion is drinking soda and the lower body motion is the rest). It also has flower balloons above which move together with character joints.
+5. Unique. 
+
+A character drinking soda and jumping jacks, jogging, doing squats, side twists and stretches at the same time (the upper body motion is drinking soda and the lower body motion is the rest). It also has flower balloons above which move together with character joints.
 
 ![unique](https://user-images.githubusercontent.com/60118869/141595370-bdcda72a-32a7-4502-809d-bd040c0c636a.gif)
 
