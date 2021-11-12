@@ -10,122 +10,126 @@ using namespace atkui;
 
 class AZombieArms : public atkui::Framework {
 public:
-   AZombieArms() : atkui::Framework(atkui::Perspective) {}
-   virtual ~AZombieArms() {}
+	AZombieArms() : atkui::Framework(atkui::Perspective) {}
+	virtual ~AZombieArms() {}
 
-   void setup() {
-      BVHReader reader;
-      reader.load("../motions/Beta/walking.bvh", _skeleton, _original);
+	void setup() {
+		BVHReader reader;
+		reader.load("../motions/Beta/walking.bvh", _skeleton, _original);
 
-      _zombieFreeze = ComputeArmFreeze(_original);
-      _zombieOffset = ComputeArmOffset(_original);
-   }
+		_zombieFreeze = ComputeArmFreeze(_original);
+		_zombieOffset = ComputeArmOffset(_original);
+	}
 
-   Motion ComputeArmOffset(const Motion& motion) {
-      quat leftLocalRot = eulerAngleRO(XYZ, radians(vec3(-53, -88, -33)));
-      quat rightLocalRot = eulerAngleRO(XYZ, radians(vec3(14, 88, -33)));
-      quat elbowLocalRot = eulerAngleRO(XYZ, radians(vec3(0, 23, 0)));
+	Motion ComputeArmOffset(const Motion& motion) {
+		quat leftLocalRot = eulerAngleRO(XYZ, radians(vec3(-53, -88, -33)));
+		quat rightLocalRot = eulerAngleRO(XYZ, radians(vec3(14, 88, -33)));
+		quat elbowLocalRot = eulerAngleRO(XYZ, radians(vec3(0, 23, 0)));
 
-      Joint* leftArm = _skeleton.getByName("Beta:LeftArm");
-      Joint* rightArm = _skeleton.getByName("Beta:RightArm");
+		Joint* leftArm = _skeleton.getByName("Beta:LeftArm");
+		Joint* rightArm = _skeleton.getByName("Beta:RightArm");
 
-      Joint* leftElbow = _skeleton.getByName("Beta:LeftForeArm");
-      Joint* rightElbow = _skeleton.getByName("Beta:RightForeArm");
+		Joint* leftElbow = _skeleton.getByName("Beta:LeftForeArm");
+		Joint* rightElbow = _skeleton.getByName("Beta:RightForeArm");
 
-      Motion result;
-      result.setFramerate(motion.getFramerate());
+		Motion result;
+		result.setFramerate(motion.getFramerate());
 
-      quat leftOffset = leftLocalRot * inverse(leftArm->getLocalRotation());
-      quat rightOffset = rightLocalRot * inverse(rightArm->getLocalRotation());
+		quat leftOffset = leftLocalRot * inverse(leftArm->getLocalRotation());
+		quat rightOffset = rightLocalRot * inverse(rightArm->getLocalRotation());
 
-      // todo: your code here
+		// todo: your code here
 
-      for (int i = 0; i < motion.getNumKeys(); i++) {
-          Pose pose = motion.getKey(i);
-          
+		for (int i = 0; i < motion.getNumKeys(); i++) {
+			Pose pose = motion.getKey(i);
 
-          pose.jointRots[leftArm->getID()] = pose.jointRots[leftArm->getID()] * leftOffset;
-          pose.jointRots[rightArm->getID()] = pose.jointRots[rightArm->getID()] * rightOffset;
-          
-          pose.jointRots[leftElbow->getID()] = elbowLocalRot;
-          pose.jointRots[rightElbow->getID()] = elbowLocalRot;
 
-          result.appendKey(pose);
-      }
+			pose.jointRots[leftArm->getID()] = pose.jointRots[leftArm->getID()] * leftOffset;
+			pose.jointRots[rightArm->getID()] = pose.jointRots[rightArm->getID()] * rightOffset;
 
-      return result;
-   }
+			pose.jointRots[leftElbow->getID()] = elbowLocalRot;
+			pose.jointRots[rightElbow->getID()] = elbowLocalRot;
 
-   Motion ComputeArmFreeze(const Motion& motion) {
-      quat leftRot = eulerAngleRO(XYZ, radians(vec3(-53, -88, -33)));
-      quat rightRot = eulerAngleRO(XYZ, radians(vec3(14, 88, -33)));
-      quat elbowRot = eulerAngleRO(XYZ, radians(vec3(0, 23, 0)));
+			result.appendKey(pose);
+		}
 
-      Joint* leftArm = _skeleton.getByName("Beta:LeftArm");
-      Joint* rightArm = _skeleton.getByName("Beta:RightArm");
+		return result;
+	}
 
-      Joint* leftElbow = _skeleton.getByName("Beta:LeftForeArm");
-      Joint* rightElbow = _skeleton.getByName("Beta:RightForeArm");
+	Motion ComputeArmFreeze(const Motion& motion) {
+		quat leftRot = eulerAngleRO(XYZ, radians(vec3(-53, -88, -33)));
+		quat rightRot = eulerAngleRO(XYZ, radians(vec3(14, 88, -33)));
+		quat elbowRot = eulerAngleRO(XYZ, radians(vec3(0, 23, 0)));
 
-      Motion result;
-      result.setFramerate(motion.getFramerate());
-      // todo: your code here
-      for (int i = 0; i < motion.getNumKeys(); i++) {
-          Pose pose = motion.getKey(i);
-          pose.jointRots[leftArm->getID()] = leftRot;
-          pose.jointRots[rightArm->getID()] = rightRot;
-          pose.jointRots[leftElbow->getID()] = elbowRot;
-          pose.jointRots[rightElbow->getID()] = elbowRot;
+		Joint* leftArm = _skeleton.getByName("Beta:LeftArm");
+		Joint* rightArm = _skeleton.getByName("Beta:RightArm");
 
-          result.appendKey(pose);
-      }
-     
+		Joint* leftElbow = _skeleton.getByName("Beta:LeftForeArm");
+		Joint* rightElbow = _skeleton.getByName("Beta:RightForeArm");
 
-      return result;
-   }
+		Motion result;
+		result.setFramerate(motion.getFramerate());
+		// todo: your code here
+		for (int i = 0; i < motion.getNumKeys(); i++) {
+			Pose pose = motion.getKey(i);
+			pose.jointRots[leftArm->getID()] = leftRot;
+			pose.jointRots[rightArm->getID()] = rightRot;
+			pose.jointRots[leftElbow->getID()] = elbowRot;
+			pose.jointRots[rightElbow->getID()] = elbowRot;
 
-   void update() {
-      double t =  elapsedTime() * 0.5;
-      if (_currentMotion == 1) {
-         _zombieFreeze.update(_skeleton, t);
-         drawText("Joint edit type: freeze", 10, 15);
+			result.appendKey(pose);
+		}
 
-      } else if (_currentMotion == 2) {
-         _zombieOffset.update(_skeleton, t);
-         drawText("Joint edit type: offset", 10, 15);
 
-      } else {
-         _original.update(_skeleton, t);
-         drawText("Joint edit type: none", 10, 15);
-      }
-   }
+		return result;
+	}
 
-   void scene() {  
-      update();
-      _drawer.draw(_skeleton, *this);
-   }
+	void update() {
+		double t = elapsedTime() * 0.5;
+		if (_currentMotion == 1) {
+			_zombieFreeze.update(_skeleton, t);
+			drawText("Joint edit type: freeze", 10, 15);
 
-   void keyUp(int key, int mods) {
-      if (key == '1') {
-          _currentMotion = 1;
-      } else if (key == '2') {
-          _currentMotion = 2;
-      } else if (key == '0') {
-          _currentMotion = 0;
-      }
-   }
+		}
+		else if (_currentMotion == 2) {
+			_zombieOffset.update(_skeleton, t);
+			drawText("Joint edit type: offset", 10, 15);
 
-   SkeletonDrawer _drawer;
-   Skeleton _skeleton;
-   Motion _original;
-   Motion _zombieFreeze;
-   Motion _zombieOffset;
-   int _currentMotion = 0;
+		}
+		else {
+			_original.update(_skeleton, t);
+			drawText("Joint edit type: none", 10, 15);
+		}
+	}
+
+	void scene() {
+		update();
+		_drawer.draw(_skeleton, *this);
+	}
+
+	void keyUp(int key, int mods) {
+		if (key == '1') {
+			_currentMotion = 1;
+		}
+		else if (key == '2') {
+			_currentMotion = 2;
+		}
+		else if (key == '0') {
+			_currentMotion = 0;
+		}
+	}
+
+	SkeletonDrawer _drawer;
+	Skeleton _skeleton;
+	Motion _original;
+	Motion _zombieFreeze;
+	Motion _zombieOffset;
+	int _currentMotion = 0;
 };
 
 int main(int argc, char** argv) {
-   AZombieArms viewer;
-   viewer.run();
-   return 0;
+	AZombieArms viewer;
+	viewer.run();
+	return 0;
 }
 
