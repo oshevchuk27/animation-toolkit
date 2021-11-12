@@ -32,8 +32,8 @@ public:
 
       // todo: replace the following line with your code
       _duration = m1.getDuration() * (1 - alpha) + m2.getDuration() * alpha;
-      deltaT = 1 / blend.getFramerate();
-      for (double i = 0; i < _duration; i += deltaT) {
+      deltaT = 1.0f / blend.getFramerate();
+      for (double i = 0; i <= _duration; i += deltaT) {
           Pose pose1 = m1.getValue((i/_duration)*m1.getDuration());
           Pose pose2 = m2.getValue((i/_duration)*m2.getDuration());
           Pose newPose = Pose::Lerp(pose1, pose2, alpha);

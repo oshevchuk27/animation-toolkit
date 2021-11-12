@@ -29,7 +29,22 @@ public:
       Motion result;
       result.setFramerate(lower.getFramerate());
       // todo: your code here
-      result.appendKey(lower.getKey(0));
+      Joint* startUpper = _skeleton.getByName("Beta:Spine1");
+
+      
+      for (int i = 0; i < lower.getNumKeys(); i++) {
+          Pose pose = lower.getKey(i);
+          Pose newPose = pose;
+          for (int j = 0; j < pose.jointRots.size(); j++) {
+              if (isADescendant(startUpper, _skeleton.getByID(j))) {
+                  newPose.jointRots[j] = glm::slerp(upper.getKey(i + 120).jointRots[j], pose.jointRots[j], alpha);
+              }
+
+          }
+          result.appendKey(newPose);
+
+      }
+     
       return result;
    }
 
@@ -39,6 +54,22 @@ public:
       SkeletonDrawer drawer;
       drawer.draw(_skeleton, *this);
       drawText("alpha: "+std::to_string(_alpha), 10, 15);
+   }
+
+   bool isADescendant(Joint* parent, Joint* child) {
+       //int id = child.getID();
+       Joint* j = child;
+  
+       while (j != NULL) {
+           if (j->getName() == parent->getName()) {
+               return true;
+           }
+            j = j->getParent();
+       }
+          return false;
+       
+
+
    }
 
    void keyUp(int key, int mods) 

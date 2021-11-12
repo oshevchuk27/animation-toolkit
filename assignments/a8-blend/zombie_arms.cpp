@@ -34,8 +34,24 @@ public:
 
       Motion result;
       result.setFramerate(motion.getFramerate());
+
+      quat leftOffset = leftLocalRot * inverse(leftArm->getLocalRotation());
+      quat rightOffset = rightLocalRot * inverse(rightArm->getLocalRotation());
+
       // todo: your code here
-      result.appendKey(motion.getKey(0));
+
+      for (int i = 0; i < motion.getNumKeys(); i++) {
+          Pose pose = motion.getKey(i);
+          
+
+          pose.jointRots[leftArm->getID()] = pose.jointRots[leftArm->getID()] * leftOffset;
+          pose.jointRots[rightArm->getID()] = pose.jointRots[rightArm->getID()] * rightOffset;
+          
+          pose.jointRots[leftElbow->getID()] = elbowLocalRot;
+          pose.jointRots[rightElbow->getID()] = elbowLocalRot;
+
+          result.appendKey(pose);
+      }
 
       return result;
    }
@@ -54,7 +70,16 @@ public:
       Motion result;
       result.setFramerate(motion.getFramerate());
       // todo: your code here
-      result.appendKey(motion.getKey(0));
+      for (int i = 0; i < motion.getNumKeys(); i++) {
+          Pose pose = motion.getKey(i);
+          pose.jointRots[leftArm->getID()] = leftRot;
+          pose.jointRots[rightArm->getID()] = rightRot;
+          pose.jointRots[leftElbow->getID()] = elbowRot;
+          pose.jointRots[rightElbow->getID()] = elbowRot;
+
+          result.appendKey(pose);
+      }
+     
 
       return result;
    }
