@@ -18,6 +18,12 @@ public:
     BVHReader reader;
     reader.load("../motions/Beta/walking.bvh", _skeleton, _walk);
     _drawer.showAxes = true;
+    for (int i = 0; i < _walk.getNumKeys(); i++) {
+        Pose p = _walk.getKey(i);
+        p.rootPos = vec3(0, p.rootPos.y, 0);
+        _walk.editKey(i, p);
+       
+    }
   }
 
   virtual void scene()
@@ -41,9 +47,14 @@ public:
 
   virtual void update()
   {
+
+      
+
     _walk.update(_skeleton, elapsedTime());
 
     // TODO: Your code here
+
+    
 
     // TODO: Override the default camera to follow the character
     // lookAt(pos, look, vec3(0, 1, 0));

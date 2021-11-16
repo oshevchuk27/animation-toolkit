@@ -34,10 +34,35 @@ public:
     assert(numBlendFrames <= motion1_.getNumKeys());
     assert(numBlendFrames <= motion2_.getNumKeys());
 
-    int start1 = motion1_.getNumKeys() - numBlendFrames;
+    blend_.setFramerate(motion1_.getFramerate());
+    int start1 = motion1_.getNumKeys() - numBlendFrames - 1;
     int start2 = 0;
 
-    // TODO: Your code here
+    for (int i = 0; i < start1; i++) {
+        blend_.appendKey(motion1_.getKey(i));
+    }
+
+    motionsBlend(numBlendFrames, start1, start2);
+
+    for (int j = numBlendFrames; j < motion2_.getNumKeys(); j++) {
+        blend_.appendKey(motion2_.getKey(j));
+    }
+
+   
+  }
+
+  void motionsBlend(int numBlendFrames, int start1, int start2) {
+
+      for (float k = 0; k <= numBlendFrames; k ++) {
+          float alpha = (float)k / numBlendFrames;
+          Pose pose1 = motion1_.getKey(start1 + k);
+          Pose pose2 = motion2_.getKey(start2 + k);
+          Pose newPose = Pose::Lerp(pose1, pose2, alpha);
+          blend_.appendKey(newPose);
+          
+         
+      }
+      
   }
 
   void save(const std::string &filename)
@@ -48,7 +73,7 @@ public:
 
   void scene()
   {
-    blend_.update(skeleton_, elapsedTime());
+    blend_.update(skeleton_, elapsedTime() * 0.5f);
     drawer_.draw(skeleton_, *this);
   }
 
