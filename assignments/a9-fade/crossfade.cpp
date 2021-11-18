@@ -38,6 +38,8 @@ public:
     int start1 = motion1_.getNumKeys() - numBlendFrames - 1;
     int start2 = 0;
 
+    reorient();
+
     for (int i = 0; i < start1; i++) {
         blend_.appendKey(motion1_.getKey(i));
     }
@@ -47,6 +49,10 @@ public:
     for (int j = numBlendFrames; j < motion2_.getNumKeys(); j++) {
         blend_.appendKey(motion2_.getKey(j));
     }
+
+
+  
+
 
    
   }
@@ -63,6 +69,28 @@ public:
          
       }
       
+  }
+
+  void reorient() {
+
+
+     
+
+      Transform T1 = Transform(motion2_.getKey(0).jointRots[skeleton_.getRoot()->getID()], motion2_.getKey(0).rootPos);
+      Transform T_desired = Transform(motion1_.getKey(motion1_.getNumKeys() - 1).jointRots[skeleton_.getRoot()->getID()], motion1_.getKey(motion1_.getNumKeys() - 1).rootPos);
+      Transform T_offset = T_desired * T1.inverse();
+      for (int i = 0; i < motion2_.getNumKeys(); i++) {
+          Pose pose = motion2_.getKey(i);
+          Transform T_orig = Transform(pose.jointRots[skeleton_.getRoot()->getID()], pose.rootPos);
+          Transform T_new = T_offset * T_orig;
+          pose.rootPos = T_new.t();
+          pose.jointRots[skeleton_.getRoot()->getID()] = T_new.r();
+          motion2_.editKey(i, pose);
+
+
+          
+
+      }
   }
 
   void save(const std::string &filename)
