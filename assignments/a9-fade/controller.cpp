@@ -24,6 +24,7 @@ public:
         _walk.editKey(i, p);
        
     }
+    
   }
 
   virtual void scene()
@@ -48,28 +49,44 @@ public:
   virtual void update()
   {
 
-      
-
     _walk.update(_skeleton, elapsedTime());
 
     // TODO: Your code here
+   
+    for (int i = 0; i < _walk.getNumKeys(); i++) {
+        Pose p = _walk.getKey(i);
+        p.jointRots[0] = glm::angleAxis(_heading, vec3(0, 1, 0));
+        _walk.editKey(i, p);
+    }
+    
+
 
     
 
     // TODO: Override the default camera to follow the character
-    // lookAt(pos, look, vec3(0, 1, 0));
+    vec3 globalLookPos = _skeleton.getByName("Beta:Head")->getGlobalTranslation();
+
+    vec3 forward = vec3(0, 0, 10);
+
+    vec3 globalForward = _skeleton.getByName("Beta:Head")->getLocal2Global().transformVector(vec3(0, 0, 350));
+
+    vec3 globalPos = globalLookPos - globalForward;
+
+
+    lookAt(globalPos, globalLookPos, vec3(0, 1, 0));
 
     // update heading when key is down
-    if (keyIsDown('D')) _heading -= 0.05;
+    if (keyIsDown('D')) _heading -= 0.05; 
     if (keyIsDown('A')) _heading += 0.05;
   }
-
+  
 protected:
-  float _heading;
+  float _heading = 0;
 
   Motion _walk;
   Skeleton _skeleton;
   atkui::SkeletonDrawer _drawer;
+ 
 };
 
 int main(int argc, char **argv)
