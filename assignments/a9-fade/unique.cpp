@@ -29,16 +29,16 @@ public:
 
 	void setup() {
 
-	
-		
-			Joint* root = new Joint("root");
-			spiral_.addJoint(root);
 
-			Joint* jf_1 = new Joint("jf_1");
-			spiral_.addJoint(jf_1, jf_1);
 
-			spiral_.fk();
-			
+		Joint* root = new Joint("root");
+		spiral_.addJoint(root);
+
+		Joint* jf_1 = new Joint("jf_1");
+		spiral_.addJoint(jf_1, root);
+
+		spiral_.fk();
+
 	}
 
 	void crossfade(int numBlendFrames)
@@ -111,24 +111,24 @@ public:
 		drawer_.draw(skeleton_, *this);
 
 
-			
-			for (int j = 0; j < spiral_.getNumJoints(); j++) {
 
-				if (spiral_.getByID(j) == spiral_.getRoot()) {
-					continue;
-				}
+		for (int j = 0; j < spiral_.getNumJoints(); j++) {
 
-				Joint* parent = spiral_.getByID(j)->getParent();
-				Joint* child = spiral_.getByID(j);
-
-				
-
-				for (int i = 0; i < 5; i++) {
-					drawSpiral(i);
-				}
-
-
+			if (spiral_.getByID(j) == spiral_.getRoot()) {
+				continue;
 			}
+
+			Joint* parent = spiral_.getByID(j)->getParent();
+			Joint* child = spiral_.getByID(j);
+
+
+
+			for (int i = 0; i < 5; i++) {
+				drawSpiral(i);
+			}
+
+
+		}
 	}
 
 	void drawSpiral(int i) {
@@ -136,8 +136,8 @@ public:
 		float value = randSpiralValue();
 		for (int k = 0; k <= 55; k++) {
 			float r = k;
-			float x = r * cos(value*k);
-			float y = r * sin(value*k);
+			float x = r * cos(value * k);
+			float y = r * sin(value * k);
 			setColor(pallet[i]);
 			drawSphere(vec3(x, y, 0) + getPosition(i), 15);
 
@@ -165,7 +165,7 @@ public:
 		float randValue = 0.5 + static_cast <float> (rand()) /
 			(static_cast <float> (RAND_MAX / (2 - 0.5)));
 		return randValue;
-	
+
 	}
 
 	float randValue() {
