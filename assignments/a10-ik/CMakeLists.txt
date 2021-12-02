@@ -1,4 +1,4 @@
-set(LIBS imgui ${LIBS})
+set(LIBS atkmath imgui ${LIBS}) 
 
 add_executable(a10-ikviewer ikviewer.cpp ik_controller.cpp)
 target_link_libraries(a10-ikviewer ${LIBS})
