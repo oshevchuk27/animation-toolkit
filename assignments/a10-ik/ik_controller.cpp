@@ -55,10 +55,14 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
 
 	float phi_2 = atan2(length(cross(r_2, e)), dot(r_2, r_2) + dot(r_2, e));
 
+	quat globalParentRot = skeleton.getByID(jointid)->getParent()->getParent()->getParent()->getGlobalRotation();
+	quat inverseGlobalParentRot = glm::inverse(globalParentRot);
+
+
 	vec3 rotAxis = normalize(cross(r_2, e));
 
 	if (length(rotAxis) >= 0.001) {
-		skeleton.getByID(jointid)->getParent()->getParent()->setLocalRotation(glm::angleAxis((float)phi_2, rotAxis));
+		skeleton.getByID(jointid)->getParent()->getParent()->setLocalRotation(inverseGlobalParentRot * glm::angleAxis((float)phi_2, rotAxis) * skeleton.getByID(jointid)->getParent()->getParent()->getGlobalRotation());
 	}
 
 
