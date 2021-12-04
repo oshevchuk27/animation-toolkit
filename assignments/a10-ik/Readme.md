@@ -14,6 +14,8 @@ https://user-images.githubusercontent.com/60118869/144698856-52b9db47-ca74-4d91-
 
 3. Dancer
 
+We can see that the character hips and hands move as required. Feet stay on the floor.
+
 ![dancer](https://user-images.githubusercontent.com/60118869/144699084-69947cb5-52da-40b5-901f-e7de3488208c.gif)
 
 4. Unique 
