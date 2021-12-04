@@ -85,8 +85,6 @@ public:
 		_rhandTarget.z = 25;
 
 		drawSphere(_rhandTarget, 10);
-
-
 	}
 
 protected:

@@ -9,5 +9,6 @@ target_link_libraries(a10-dancer ${LIBS})
 add_executable(a10-looker looker.cpp)
 target_link_libraries(a10-looker ${LIBS})
 
-add_executable(a10-unique unique.cpp)
+add_executable(a10-unique unique.cpp ik_controller.cpp)
 target_link_libraries(a10-unique ${LIBS})
+

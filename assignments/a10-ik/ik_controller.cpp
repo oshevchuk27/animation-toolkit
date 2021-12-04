@@ -27,6 +27,10 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
 		return false;
 	}
 
+	if (length(skeleton.getByID(jointid)->getGlobalTranslation() - goalPos) < epsilon) {
+		return false;
+	}
+
 	Joint* hip = knee->getParent();
 
 	// TODO: Your code here
@@ -50,6 +54,8 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
 
 	skeleton.getByID(jointid)->getParent()->setLocalRotation(glm::angleAxis((float)theta_2_z, axis));
 
+	skeleton.fk();
+
 	vec3 r_2 = skeleton.getByID(jointid)->getGlobalTranslation() - skeleton.getByID(jointid)->getParent()->getParent()->getGlobalTranslation();
 	vec3 e = goalPos - skeleton.getByID(jointid)->getGlobalTranslation();
 
@@ -61,11 +67,9 @@ bool IKController::solveIKAnalytic(Skeleton& skeleton,
 
 	vec3 rotAxis = normalize(cross(r_2, e));
 
-	if (length(rotAxis) >= 0.001) {
+	if (length(rotAxis) >= epsilon) {
 		skeleton.getByID(jointid)->getParent()->getParent()->setLocalRotation(inverseGlobalParentRot * glm::angleAxis((float)phi_2, rotAxis) * skeleton.getByID(jointid)->getParent()->getParent()->getGlobalRotation());
 	}
-
-
 
 	skeleton.fk();
 
