@@ -23,7 +23,7 @@ public:
 		_motion.update(_skeleton, 0);
 		_drawer.color = vec3(1, 0, 0);
 		theta = 0.0;
-		thetaRate = 2.0;
+		thetaRate = 3.0;
 		rightFootPos = _skeleton.getByName("Beta:RightFoot")->getGlobalTranslation();
 		leftFootPos = _skeleton.getByName("Beta:LeftFoot")->getGlobalTranslation();
 
