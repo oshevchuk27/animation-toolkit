@@ -4,8 +4,8 @@
 using namespace glm;
 using namespace atk;
 
-float ASteerable::kVelKv = 35.0; 
-float ASteerable::kOriKv = 16.0;  
+float ASteerable::kVelKv = 5.0;
+float ASteerable::kOriKv = 16.0;
 float ASteerable::kOriKp = 64.0;
 
 const double PI = 3.1415926535897932384626433832795;
@@ -44,8 +44,6 @@ void ASteerable::senseControlAct(const vec3& veld, float dt)
 
 	// find derivative
 
-
-
 	_derivative[POS] = _state[VEL];
 	_derivative[ORI] = _state[AVEL];
 	_derivative[VEL] = _force / _mass;
@@ -54,37 +52,32 @@ void ASteerable::senseControlAct(const vec3& veld, float dt)
 
 	// update state
 
-
-	std::cout << "vd" << _vd << std::endl;
-
-
-
-		_state[POS] = _state[POS] + dt * _derivative[POS];
-		_state[ORI] = _state[ORI] + dt * _derivative[ORI];
-		_state[VEL] = _state[VEL] + dt * _derivative[VEL];
-		_state[AVEL] = _state[AVEL] + dt * _derivative[AVEL];
+	_state[POS] = _state[POS] + dt * _derivative[POS];
+	_state[ORI] = _state[ORI] + dt * _derivative[ORI];
+	_state[VEL] = _state[VEL] + dt * _derivative[VEL];
+	_state[AVEL] = _state[AVEL] + dt * _derivative[AVEL];
 
 
-	
-		// compute global position and orientation and update _characterRoot
-		quat rot = glm::angleAxis(_state[ORI], vec3(0, 1, 0));
-		vec3 localPos(0, 0, _state[POS]);
 
-		_characterRoot.setT(rot * localPos + _characterRoot.t());
-		_characterRoot.setR(rot);
+	// compute global position and orientation and update _characterRoot
+	quat rot = glm::angleAxis(_state[ORI], vec3(0, 1, 0));
+	vec3 localPos(0, 0, _state[POS]);
 
-	
+	_characterRoot.setT(rot * localPos + _characterRoot.t());
+	_characterRoot.setR(rot);
+
+
 }
 
 // randomize the colors, characters, and animation times here
 void ASteerable::randomizeAppearance()
 {
-   // to randomize the walking animations, compute different initial values 
-   // for _time
+	// to randomize the walking animations, compute different initial values 
+	// for _time
 
-   // to randomize color, call _drawer.setColor
+	// to randomize color, call _drawer.setColor
 
-   // to randomize shape, compute random values for _drawer.setJointRadius
-   // or randomly assign different drawers to have a mix of characters
+	// to randomize shape, compute random values for _drawer.setJointRadius
+	// or randomly assign different drawers to have a mix of characters
 }
 

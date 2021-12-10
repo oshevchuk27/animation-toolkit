@@ -10,8 +10,8 @@ using namespace atk;
 ABehavior::ABehavior(const char* name) : _name(name)
 {
    // TODO: set good values
-   setParam("MaxSpeed", 200.5);
-   setParam("AgentRadius", 100);
+   setParam("MaxSpeed", 200);
+   setParam("AgentRadius", 200);
 }
 
 //--------------------------------------------------------------
@@ -42,11 +42,9 @@ vec3 ASeek::calculateDesiredVelocity(const ASteerable& actor,
 
     vec3 normalizedDir = normalize(desiredDir);
 
-    std::cout << normalizedDir << std::endl;
 
     vec3 desiredVelocity = getParam("MaxSpeed") * normalizedDir;
 
-    std::cout << desiredVelocity << std::endl;
 
 
    return desiredVelocity;
@@ -69,8 +67,21 @@ AFlee::AFlee() : ABehavior("Flee")
 // @note: call getParam("MaxSpeed") to get the max speed
 vec3 AFlee::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& targetPos)
+
 {
-    return vec3(0,0,0);
+
+    vec3 currentPos = actor.getPosition();
+    vec3 desiredDir = targetPos - currentPos;
+
+
+
+    vec3 normalizedDir = normalize(desiredDir);
+
+
+    vec3 desiredVelocity = -1.0f * getParam("MaxSpeed") * normalizedDir;
+
+
+    return desiredVelocity;
 }
 
 //--------------------------------------------------------------
@@ -79,8 +90,8 @@ vec3 AFlee::calculateDesiredVelocity(const ASteerable& actor,
 AArrival::AArrival() : ABehavior("Arrival") 
 {
    // TODO: Set good parameters
-   setParam("kArrival", 1);
-   setParam("TargetRadius", 1);
+   setParam("kArrival", 10);
+   setParam("TargetRadius", 50);
 }
 
 //
@@ -90,9 +101,26 @@ AArrival::AArrival() : ABehavior("Arrival")
 // @param actor: steerable character to move
 // @return desired velocity
 vec3 AArrival::calculateDesiredVelocity(const ASteerable& actor,
-   const AWorld& world, const vec3& targetPos)
+    const AWorld& world, const vec3& targetPos)
+
 {
-    return vec3(0,0,0);
+
+    vec3 p_d = targetPos;
+    float r = getParam("TargetRadius");
+    vec3 targetOffset = p_d - actor.getPosition();
+    float distance = length(targetOffset);
+    float speed;
+    if (distance <= r) {
+        speed = distance / r;
+    }
+    else {
+        speed = getParam("MaxSpeed");
+    }
+
+    vec3 desiredVelocity = speed * normalize(targetOffset);
+
+
+    return desiredVelocity;
 }
 
 //--------------------------------------------------------------
@@ -100,9 +128,9 @@ vec3 AArrival::calculateDesiredVelocity(const ASteerable& actor,
 
 ADeparture::ADeparture() : ABehavior("Departure") 
 {
-   setParam("InnerRadius", 1);
-   setParam("OuterRadius", 1);
-   setParam("kDeparture", 1);
+   setParam("InnerRadius", 50);
+   setParam("OuterRadius", 50);
+   setParam("kDeparture", 10);
 }
 
 //
@@ -111,7 +139,22 @@ ADeparture::ADeparture() : ABehavior("Departure")
 vec3 ADeparture::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& targetPos)
 {
-   return vec3(0,0,0);
+    vec3 p_d = targetPos;
+    float r = getParam("TargetRadius");
+    vec3 targetOffset = p_d - actor.getPosition();
+    float distance = length(targetOffset);
+    float speed;
+    if (distance <= r) {
+        speed = distance / r;
+    }
+    else {
+        speed = getParam("MaxSpeed");
+    }
+
+    vec3 desiredVelocity = -1.0f * speed * normalize(targetOffset);
+
+
+    return desiredVelocity;
 }
 
 //--------------------------------------------------------------
@@ -136,14 +179,41 @@ vec3 AAvoid::calculateDesiredVelocity(const ASteerable& actor,
 AWander::AWander() : ABehavior("Wander")
 {
    setParam("kWander", 1);
+   setParam("wanderStrength", 70);
+   setParam("wanderRate", 100);
+}
+
+
+float getRandomValue() {
+    return  -1 + (float)(rand()) / ((float)(RAND_MAX / (1 + 1)));
 }
 
 // Wander returns a velocity whose direction changes randomly (and smoothly)
 vec3 AWander::calculateDesiredVelocity(const ASteerable& actor,
    const AWorld& world, const vec3& target)
 {
-   return vec3(0,0,0);
+
+    vec3 targetPoint = vec3(0, 0, 100);
+
+    vec3 globalTargetPos = actor.getRotation() * targetPoint;
+
+    vec3 currentPos = actor.getPosition();
+    vec3 desiredDir = globalTargetPos - currentPos;
+
+    vec3 v_d = normalize(desiredDir) * getParam("MaxSpeed");
+
+    vec3 jitterVelocity = vec3(getParam("wanderRate") * getRandomValue(), 0, getParam("wanderRate") * getRandomValue());
+
+    vec3 v_jitter = getParam("wanderStrength") * normalize(jitterVelocity);
+
+
+    v_d = v_d + v_jitter;
+
+
+   return v_d;
 }
+
+
 
 //--------------------------------------------------------------
 // Separation behavior
