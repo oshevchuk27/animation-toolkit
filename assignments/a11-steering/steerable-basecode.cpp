@@ -69,6 +69,29 @@ void ASteerable::senseControlAct(const vec3& veld, float dt)
 
 }
 
+float randColorValue() {
+	float randColorValue = 0 + static_cast <float> (rand()) /
+		(static_cast <float> (RAND_MAX / (1 + 1)));
+	return randColorValue;
+}
+
+
+
+float randSizeValue() {
+	float randSizeValue = 1 + static_cast <float> (rand()) /
+		(static_cast <float> (RAND_MAX / (2 - 1)));
+	return randSizeValue;
+}
+
+
+float randRadiusValue() {
+	float randRadValue = 10 + static_cast <float> (rand()) /
+		(static_cast <float> (RAND_MAX / (20 - 10)));
+	return randRadValue;
+}
+
+
+
 // randomize the colors, characters, and animation times here
 void ASteerable::randomizeAppearance()
 {
@@ -77,7 +100,16 @@ void ASteerable::randomizeAppearance()
 
 	// to randomize color, call _drawer.setColor
 
+	_drawer.color = vec3(randColorValue(), randColorValue(), randColorValue());
+
 	// to randomize shape, compute random values for _drawer.setJointRadius
+	
+	_drawer.size = vec3(randSizeValue());
+
+	_drawer.jointRadius = randRadiusValue();
+
 	// or randomly assign different drawers to have a mix of characters
+
+
 }
 
