@@ -98,12 +98,14 @@ void ASteerable::randomizeAppearance()
 	// to randomize the walking animations, compute different initial values 
 	// for _time
 
+	_time = agl::random(0, 10000);
+
 	// to randomize color, call _drawer.setColor
 
 	_drawer.color = vec3(randColorValue(), randColorValue(), randColorValue());
 
 	// to randomize shape, compute random values for _drawer.setJointRadius
-	
+
 	_drawer.size = vec3(randSizeValue());
 
 	_drawer.jointRadius = randRadiusValue();
