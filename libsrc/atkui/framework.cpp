@@ -54,8 +54,8 @@ void Framework::draw() {
 void Framework::drawFloor(float size, float big, float small) {
   renderer.beginShader("floor");
   renderer.setUniform("uFog.color", vec3(0.8));
-  renderer.setUniform("uLargeBlockSize", 200);
-  renderer.setUniform("uSmallBlockSize", 50);
+  renderer.setUniform("uLargeBlockSize", big);
+  renderer.setUniform("uSmallBlockSize", small);
   renderer.setUniform("uFog.minDist", 0.75f * size);
   renderer.setUniform("uFog.maxDist", size);
   renderer.push();
