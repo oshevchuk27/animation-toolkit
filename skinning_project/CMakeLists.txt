@@ -1,3 +1,5 @@
 set(LIBS ${CORE})
 add_executable(linear_blend_skinning linear_blend_skinning.cpp)
+add_executable(skin_test_mesh skin_test_mesh.cpp)
 target_link_libraries(linear_blend_skinning ${LIBS})
+target_link_libraries(skin_test_mesh ${LIBS})
