@@ -159,7 +159,7 @@ public:
             }
             Joint* parent = skeleton.getByID(i)->getParent();
             if (i == skeleton.getNumJoints() - 1) {
-                parent->setLocalRotation(glm::angleAxis(sin(1.5f * elapsedTime() + i), vec3(1, 0, 0)));
+                parent->setLocalRotation(glm::angleAxis<float>(sin(1.5f * elapsedTime() + i), vec3(1, 0, 0)));
             }
             Joint* child = skeleton.getByID(i);
             vec3 globalParentPos = parent->getGlobalTranslation();
@@ -179,7 +179,7 @@ public:
 
         _mesh.update(elapsedTime());
 
-        drawFloor(200, 2, 5);
+        drawFloor(200, 4, 1);
 	} 
 
     /*void drawFloor() {

@@ -120,7 +120,7 @@ public:
 
 			Joint* jf_1 = new Joint("jf_1");
 			jf_1->setLocalTranslation(vec3(0, 30, 30));
-			jf_1->setLocalRotation(glm::angleAxis(10.f, vec3(0, 1, 0)));
+			jf_1->setLocalRotation(glm::angleAxis<float>(10.f, vec3(0, 1, 0)));
 			_flower.addJoint(jf_1, root_3);
 
 
@@ -147,7 +147,7 @@ public:
 			}
 			Joint* parent = _character.getByID(i)->getParent();
 			if (i == _character.getNumJoints() - 2) {
-				parent->setLocalRotation(glm::angleAxis(sin(1.5f * elapsedTime() + i), vec3(1, 0, 0)));
+				parent->setLocalRotation(glm::angleAxis<float>(sin(1.5f * elapsedTime() + i), vec3(1, 0, 0)));
 			}
 
 
@@ -179,7 +179,7 @@ public:
 				continue;
 			}
 			Joint* parent = _stem.getByID(i)->getParent();
-			parent->setLocalRotation(glm::angleAxis(sin(0.5f * elapsedTime() + i), vec3(1, 0, 0)));
+			parent->setLocalRotation(glm::angleAxis<float>(sin(0.5f * elapsedTime() + i), vec3(1, 0, 0)));
 			Joint* child = _stem.getByID(i);
 			vec3 globalParentPos = parent->getGlobalTranslation();
 			vec3 globalPos = child->getGlobalTranslation();
@@ -207,11 +207,11 @@ public:
 				}
 				// strange, but guarantees smooth flower with stem rotation
 				Joint* parent = _stem.getByID(j)->getParent();
-				parent->setLocalRotation(glm::angleAxis(sin(elapsedTime()), vec3(0, 1, 0)));
+				parent->setLocalRotation(glm::angleAxis<float>(sin(elapsedTime()), vec3(0, 1, 0)));
 				parent = _flower.getByID(j)->getParent();
 
 				Joint* child = _flower.getByID(j);
-				child->setLocalRotation(glm::angleAxis(sin(elapsedTime()), vec3(0, 1, 0)));
+				child->setLocalRotation(glm::angleAxis<float>(sin(elapsedTime()), vec3(0, 1, 0)));
 
 				for (int k = 0; k <= 500; k++) {
 

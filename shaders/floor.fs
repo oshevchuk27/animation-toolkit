@@ -1,7 +1,7 @@
 #version 400
 
-uniform float uLargeBlockSize; // todo
-uniform float uSmallBlockSize; // todo
+uniform float uLargeBlockSize; 
+uniform float uSmallBlockSize; 
 
 in vec4 position;
 in vec3 normal;
@@ -11,10 +11,10 @@ out vec4 FragColor;
 
 vec3 gridColor(in vec3 pos)
 {
-   float largeBlock = 200.0;
-   float smallBlock = 50.0;
+   float largeBlock = uLargeBlockSize; // 200
+   float smallBlock = uSmallBlockSize; // 50
 
-   float lineWidth = 5.0;
+   float lineWidth = smallBlock * 0.1; //5.0;
    float largePercent = lineWidth / largeBlock;
    float smallPercent = (lineWidth * 0.25) / smallBlock;
 

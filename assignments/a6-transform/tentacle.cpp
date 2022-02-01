@@ -53,7 +53,7 @@ public:
 				continue;
 			}
 			Joint* parent = _tentacle.getByID(i)->getParent();
-			parent->setLocalRotation(glm::angleAxis(sin(1.5f * elapsedTime() + i), vec3(0, 0, 1)));
+			parent->setLocalRotation(glm::angleAxis<float>(sin(1.5f * elapsedTime() + i), vec3(0, 0, 1)));
 			Joint* child = _tentacle.getByID(i);
 			vec3 globalParentPos = parent->getGlobalTranslation();
 			vec3 globalPos = child->getGlobalTranslation();

@@ -14,7 +14,7 @@ public:
 
 		float duration = 5.0f;
 
-		(float)t = fmod(elapsedTime(), 5);
+		float t = fmod(elapsedTime(), 5);
 		t = t / duration;
 
 
