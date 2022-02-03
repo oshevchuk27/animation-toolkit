@@ -22,8 +22,8 @@ public:
 
     void update(float elapsedTime) {
         vec3 p = vec3(vertexData(POSITION, 0));
-        setVertexData(POSITION, 0, vec4(0, 0, 0, 0));
-        //setVertexData(POSITION, 0, vec4(-0.5, 0, sin(elapsedTime), 0));
+        setVertexData(POSITION, 0, vec4(-0.5, 0, 0, 0));
+        // sin(elapsedTime)
 
     }
 
@@ -33,6 +33,7 @@ public:
         std::vector<GLuint> indices;
         std::vector<GLfloat> points;
         std::vector<GLfloat> normals;
+        std::vector<GLfloat> weights;
 
         indices.push_back(0);
         indices.push_back(1);
@@ -159,7 +160,7 @@ public:
             }
             Joint* parent = skeleton.getByID(i)->getParent();
             if (i == skeleton.getNumJoints() - 1) {
-                parent->setLocalRotation(glm::angleAxis<float>(sin(1.5f * elapsedTime() + i), vec3(1, 0, 0)));
+                parent->setLocalRotation(glm::angleAxis<float>(sin(1.5f * elapsedTime() + i), vec3(0, 0, 1)));
             }
             Joint* child = skeleton.getByID(i);
             vec3 globalParentPos = parent->getGlobalTranslation();
@@ -181,23 +182,6 @@ public:
 
         drawFloor(200, 4, 1);
 	} 
-
-    /*void drawFloor() {
-
-
-        renderer.beginShader("floor");
-        renderer.setUniform("uFog.color", vec3(0.8));
-        renderer.setUniform("uLargeBlockSize", 20);
-        renderer.setUniform("uSmallBlockSize", 5);
-        renderer.setUniform("uFog.minDist", 0.75f * 100);
-        renderer.setUniform("uFog.maxDist", 100);
-        renderer.push();
-        renderer.scale(vec3(100, 1, 100));
-        renderer.plane();
-        renderer.pop();
-        renderer.endShader();
-    }*/
-
 
 
 
