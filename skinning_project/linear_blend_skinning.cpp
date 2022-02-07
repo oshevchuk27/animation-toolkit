@@ -13,27 +13,41 @@ using glm::vec4;
 class SkinTestMesh : public agl::TriangleMesh {
 public:
     SkinTestMesh() {
-        // compute verts,normals,indices here
 
         setIsDynamic(true);
+        
     }
 
-    // try to animate one vertex
 
-    void update(float elapsedTime) {
-        vec3 p = vec3(vertexData(POSITION, 0));
-        setVertexData(POSITION, 0, vec4(-0.5, 0, 0, 0));
-        // sin(elapsedTime)
+    void update(float elapsedTime, Skeleton skeleton) {
+        
+   
+        
+        for (int i = 0; i < numVertices(); i++) {
+            
+            vec3 p = vec3(points[3 * i], points[3 * i + 1], points[3 * i + 2]);
+
+            Transform transJoint1 = skeleton.getByName("root")->getLocal2Global() *
+                restBone1.inverse();
+
+            Transform transJoint2 = skeleton.getByName("joint1")->getLocal2Global() *
+                restBone2.inverse();
+
+
+
+            vec3 newp = weights[i * 2] * transJoint1.transformPoint(p) + 
+                weights[i * 2 + 1] * transJoint2.transformPoint(p);
+            
+            setVertexData(POSITION, i, vec4(newp, 0));
+
+        }
+
+        
 
     }
 
     void init() {
 
-
-        std::vector<GLuint> indices;
-        std::vector<GLfloat> points;
-        std::vector<GLfloat> normals;
-        std::vector<GLfloat> weights;
 
         indices.push_back(0);
         indices.push_back(1);
@@ -99,22 +113,60 @@ public:
             normals.push_back(1);
         }
 
+        weights.push_back(1);
+        weights.push_back(0);
+        weights.push_back(1);
+        weights.push_back(0);
+        weights.push_back(0.75);
+        weights.push_back(0.25);
+        weights.push_back(0.75);
+        weights.push_back(0.25);
+        weights.push_back(0.5);
+        weights.push_back(0.5);
+        weights.push_back(0.5);
+        weights.push_back(0.5);
+        weights.push_back(0.25);
+        weights.push_back(0.75);
+        weights.push_back(0.25);
+        weights.push_back(0.75);
+        weights.push_back(0);
+        weights.push_back(1);
+        weights.push_back(0);
+        weights.push_back(1);
+
+
 
 
         initBuffers(&indices, &points, &normals);
 
     }
 
+    void init(const Skeleton& skeleton) {
 
-    vec3 position(const vec3& p, float t) {
-        float angle = t;
-        float frequency = 7.0;
-        float amplitude = 0.05;
 
-        float heightFn = (angle + frequency * p[0] * frequency * p[2]);
-        float y = amplitude * sin(heightFn);
-        return vec3(p.x, y, p.z);
+        restBone1 = skeleton.getByName("root")->getLocal2Global();
+        restBone2 = skeleton.getByName("joint1")->getLocal2Global();
+
+        init();
+
+        
+
     }
+
+    private:
+        std::vector<GLuint> indices;
+        std::vector<GLfloat> points;
+        std::vector<GLfloat> normals;
+        std::vector<GLfloat> weights;
+        Transform restBone1;
+        Transform restBone2;
+
+
+       
+
+
+
+
 
 };
 
@@ -145,7 +197,9 @@ public:
 
 		skeleton.fk();
 
-        _mesh.init();
+
+
+        _mesh.init(skeleton);
 
 	}
 
@@ -161,6 +215,7 @@ public:
             Joint* parent = skeleton.getByID(i)->getParent();
             if (i == skeleton.getNumJoints() - 1) {
                 parent->setLocalRotation(glm::angleAxis<float>(sin(1.5f * elapsedTime() + i), vec3(0, 0, 1)));
+                //parent->setLocalRotation(glm::angleAxis<float>(0.1, vec3(0, 0, 1)));
             }
             Joint* child = skeleton.getByID(i);
             vec3 globalParentPos = parent->getGlobalTranslation();
@@ -176,18 +231,21 @@ public:
 
        
         renderer.mesh(_mesh);
+
+
         renderer.pop();
 
-        _mesh.update(elapsedTime());
+        _mesh.update(elapsedTime(), skeleton);
 
         drawFloor(200, 4, 1);
 	} 
 
-
+   
 
 protected:
 	Skeleton skeleton;
     SkinTestMesh _mesh = SkinTestMesh();
+
 
 };
 
