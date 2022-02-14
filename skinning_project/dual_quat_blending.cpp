@@ -33,20 +33,49 @@ public:
             vec3 p = vec3(points[3 * i], points[3 * i + 1], points[3 * i + 2]);
 
 
-            quat restBone1Rot = skeleton.getByName("root")->getLocal2Global().r();
-            vec3 restBone1Trans = skeleton.getByName("root")->getLocal2Global().t();
+            quat Bone1Rot = skeleton.getByName("root")->getLocal2Global().r();
+            vec3 Bone1Trans = skeleton.getByName("root")->getLocal2Global().t();
 
-            dualquat Bone1 = dualquat(restBone1Rot, restBone1Trans);
-
-
-            quat restBone2Rot = skeleton.getByName("joint1")->getLocal2Global().r();
-            vec3 restBone2Trans = skeleton.getByName("joint1")->getLocal2Global().t();
-
-            dualquat Bone2 = dualquat(restBone2Rot, restBone2Trans);
+            dualquat Bone1 = dualquat(Bone1Rot, Bone1Trans);
 
 
-            dualquat newquat = normalize(weights[i * 2] * Bone1 +
-                weights[i * 2 + 1] * Bone2);
+            quat Bone2Rot = skeleton.getByName("joint1")->getLocal2Global().r();
+            vec3 Bone2Trans = skeleton.getByName("joint1")->getLocal2Global().t();
+
+            dualquat Bone2 = dualquat(Bone2Rot, Bone2Trans);
+
+
+            
+
+            dualquat RestBone1 = dualquat(RestBone1Rot, RestBone1Trans);
+
+            dualquat RestBone2 = dualquat(RestBone2Rot, RestBone2Trans);
+
+
+            dualquat newquat = normalize(weights[i * 2] * Bone1 * RestBone1 +
+                weights[i * 2 + 1] * Bone2 * RestBone2);
+
+            dualquat Bone1Quat = Bone1 * RestBone1;
+
+            quat DualBone1Quat = Bone1Quat.dual;
+
+            quat Bone1Rotquat = Bone1Quat.real;
+
+            dualquat Bone2Quat = Bone2 * RestBone2;
+
+            quat Bone2Rotquat = Bone2Quat.real;
+
+            if (dot(Bone1Rotquat, Bone2Rotquat) < 0.0f) {
+                Bone1Rotquat = -Bone1Rotquat;
+                DualBone1Quat = -DualBone1Quat;
+            }
+
+            Bone1Quat = dualquat(Bone1Rotquat, DualBone1Quat);
+
+            newquat = normalize(weights[i * 2] * Bone1Quat +
+                weights[i * 2 + 1] * Bone2 * RestBone2);
+
+
 
             vec3 newp = newquat * p * inverse(newquat);
 
@@ -155,6 +184,21 @@ public:
 
     void init(const Skeleton& skeleton) {
 
+
+        RestBone1Transform = skeleton.getByName("root")->getLocal2Global().inverse();
+        RestBone1Rot = RestBone1Transform.r();
+        RestBone1Trans = RestBone1Transform.t();
+
+
+        RestBone2Transform = skeleton.getByName("joint1")->getLocal2Global().inverse();
+
+        RestBone2Rot = RestBone2Transform.r();
+        RestBone2Trans = RestBone2Transform.t();
+
+
+
+
+
         init();
 
     }
@@ -164,6 +208,14 @@ private:
     std::vector<GLfloat> points;
     std::vector<GLfloat> normals;
     std::vector<GLfloat> weights;
+
+    Transform  RestBone1Transform;
+    Transform  RestBone2Transform;
+
+    quat RestBone1Rot;
+    vec3 RestBone1Trans;
+    quat RestBone2Rot;
+    vec3 RestBone2Trans;
    
 
 
@@ -213,8 +265,8 @@ public:
             }
             Joint* parent = skeleton.getByID(i)->getParent();
             if (i == skeleton.getNumJoints() - 1) {
-                parent->setLocalRotation(glm::angleAxis<float>(sin(1.5f * elapsedTime() + i), vec3(0, 0, 1)));
-                //parent->setLocalRotation(glm::angleAxis<float>(0.1, vec3(0, 0, 1)));
+                //parent->setLocalRotation(glm::angleAxis<float>(sin(1.5f * elapsedTime() + i), vec3(0, 0, 1)));
+                parent->setLocalRotation(glm::angleAxis<float>(0.5, vec3(0, 0, 1)));
             }
             Joint* child = skeleton.getByID(i);
             vec3 globalParentPos = parent->getGlobalTranslation();
