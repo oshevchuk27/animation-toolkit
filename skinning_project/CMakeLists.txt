@@ -1,5 +1,8 @@
 set(LIBS ${CORE})
+set(LIBS imgui ${LIBS})
 add_executable(linear_blend_skinning linear_blend_skinning.cpp)
 add_executable(skin_test_mesh skin_test_mesh.cpp)
+add_executable(dual_quat_blending dual_quat_blending.cpp)
 target_link_libraries(linear_blend_skinning ${LIBS})
 target_link_libraries(skin_test_mesh ${LIBS})
+target_link_libraries(dual_quat_blending ${LIBS})
