@@ -52,10 +52,10 @@ public:
             dualquat RestBone2 = dualquat(RestBone2Rot, RestBone2Trans);
 
 
-            dualquat newquat = normalize(weights[i * 2] * Bone1 * RestBone1 +
-                weights[i * 2 + 1] * Bone2 * RestBone2);
+            dualquat newquat = normalize(weights[i * 2] * Bone1 * inverse(RestBone1) +
+                weights[i * 2 + 1] * Bone2 * inverse(RestBone2));
 
-            dualquat Bone1Quat = Bone1 * RestBone1;
+            /*dualquat Bone1Quat = Bone1 * RestBone1;
 
             quat DualBone1Quat = Bone1Quat.dual;
 
@@ -75,9 +75,10 @@ public:
             newquat = normalize(weights[i * 2] * Bone1Quat +
                 weights[i * 2 + 1] * Bone2 * RestBone2);
 
+            */
 
 
-            vec3 newp = newquat * p * inverse(newquat);
+            vec3 newp = newquat * p;
 
             setVertexData(POSITION, i, vec4(newp, 0));
 
@@ -185,19 +186,15 @@ public:
     void init(const Skeleton& skeleton) {
 
 
-        RestBone1Transform = skeleton.getByName("root")->getLocal2Global().inverse();
+        RestBone1Transform = skeleton.getByName("root")->getLocal2Global();
         RestBone1Rot = RestBone1Transform.r();
         RestBone1Trans = RestBone1Transform.t();
 
 
-        RestBone2Transform = skeleton.getByName("joint1")->getLocal2Global().inverse();
+        RestBone2Transform = skeleton.getByName("joint1")->getLocal2Global();
 
         RestBone2Rot = RestBone2Transform.r();
         RestBone2Trans = RestBone2Transform.t();
-
-
-
-
 
         init();
 
@@ -265,9 +262,12 @@ public:
             }
             Joint* parent = skeleton.getByID(i)->getParent();
             if (i == skeleton.getNumJoints() - 1) {
-                //parent->setLocalRotation(glm::angleAxis<float>(sin(1.5f * elapsedTime() + i), vec3(0, 0, 1)));
-                parent->setLocalRotation(glm::angleAxis<float>(0.5, vec3(0, 0, 1)));
+                parent->setLocalRotation(glm::angleAxis<float>(sin(1.5f * elapsedTime() + i), vec3(0, 0, 1)));
+               //parent->setLocalRotation(glm::angleAxis<float>(0.3f, vec3(0, 0, 1)));
+
+               //parent->setLocalTranslation(vec3(1, 2, 0));
             }
+            
             Joint* child = skeleton.getByID(i);
             vec3 globalParentPos = parent->getGlobalTranslation();
             vec3 globalPos = child->getGlobalTranslation();
