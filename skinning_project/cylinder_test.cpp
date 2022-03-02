@@ -59,7 +59,7 @@ public:
         // Generate positions and normals
         GLfloat theta;
         GLfloat thetaFac = glm::two_pi<float>() / nSlices;
-        GLfloat hLen = 0.5 * len;
+        GLfloat hLen = len;
         GLuint offsets[4] = {
           0,
           nSlices + 1,
@@ -72,45 +72,50 @@ public:
             if (i == 0) {
                 for (GLuint j = 0; j < 2; j++) {
                     int offset = offsets[j];
-                    float z = j % 2 == 0 ? -hLen : hLen;
+                    float y = j % 2 == 0 ? 0 : hLen;
                     p[idx + 0 + 3 * offset] = 0.0;
-                    p[idx + 1 + 3 * offset] = 0.0;
-                    p[idx + 2 + 3 * offset] = z;
+                    p[idx + 1 + 3 * offset] = y;
+                    p[idx + 2 + 3 * offset] = 0.0;
+
 
                     n[idx + 0 + 3 * offset] = 0.0;
-                    n[idx + 1 + 3 * offset] = 0.0;
-                    n[idx + 2 + 3 * offset] = j % 2 == 0 ? -1.0 : 1.0;
+                    n[idx + 1 + 3 * offset] = j % 2 == 0 ? -1.0 : 1.0;
+                    n[idx + 2 + 3 * offset] = 0.0;
 
                     tex[tIdx + 0 + 2 * offset] = 0.0;
-                    tex[tIdx + 1 + 2 * offset] = (z + hLen) / len;
+                    tex[tIdx + 1 + 2 * offset] = (y+ hLen) / len;
                 }
             }
             else {
                 theta = (i - 1) * thetaFac;
-                float nx = cosf(theta);
-                float ny = sinf(theta);
+                float nz = cosf(theta);
+                float nx = sinf(theta);
 
                 float s = 0.5 * (theta / glm::pi<float>());
 
                 for (GLuint j = 0; j < 4; j++) {
                     int offset = offsets[j];
-                    float z = j % 2 == 0 ? -hLen : hLen;
+                    float y = j % 2 == 0 ? 0: hLen;
                     float r = j % 2 == 0 ? r1 : r2;
-                    float t = (z + hLen) / len;
+                    float t = (y + hLen) / len;
 
                     p[idx + 0 + 3 * offset] = r * nx;
-                    p[idx + 1 + 3 * offset] = r * ny;
-                    p[idx + 2 + 3 * offset] = z;
+                    p[idx + 1 + 3 * offset] = y;
+                    p[idx + 2 + 3 * offset] = r * nz;
 
                     n[idx + 0 + 3 * offset] = j < 2 ? 0.0 : nx;
-                    n[idx + 1 + 3 * offset] = j < 2 ? 0.0 : ny;  // todo: fix normal
-                    n[idx + 2 + 3 * offset] = j < 2 ? (j % 2 == 0 ? -1.0 : 1.0) : 0.0;
+                    n[idx + 1 + 3 * offset] = j < 2 ? (j % 2 == 0 ? -1.0 : 1.0) : 0.0;
+                    n[idx + 2 + 3 * offset] = j < 2 ? 0.0 : nz;  // todo: fix normal
 
                     tex[tIdx + 0 + 2 * offset] = s;
                     tex[tIdx + 1 + 2 * offset] = t;
+
+                    
                 }
+
             }
 
+           
             idx += 3;
             tIdx += 2;
         }
@@ -152,10 +157,6 @@ public:
 
         initBuffers(&el, &p, &n, &tex);
     }
-
-
-    
-
 
 
    /*void update(float elapsedTime, Skeleton skeleton) {
@@ -321,6 +322,8 @@ private:
     float _length;
     float _nSlices;
 
+    int stacks;
+
     /*std::vector<GLuint> indices;
     std::vector<GLfloat> points;
     std::vector<GLfloat> normals;
@@ -415,7 +418,7 @@ public:
 
 protected:
     Skeleton skeleton;
-    NewCylinder _mesh = NewCylinder(0.5, 10, 8);
+    NewCylinder _mesh = NewCylinder(0.5, 2, 8);
 
 
 };
