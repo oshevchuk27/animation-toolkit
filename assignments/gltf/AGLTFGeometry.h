@@ -20,7 +20,13 @@ class AGLTFGeometry
    void draw(agl::Renderer& renderer, const atk::Skeleton& skeleton);
    void draw(agl::Renderer& renderer);
    void print(bool printBuffers = false);
+   
    bool hasSkin() const;
+   int getNumMeshes() const;
+   int getNumPrimitives(int meshid) const;
+   int getNumVertices(int meshid, int primid, const char* attrib) const;
+   glm::vec4 getVertexData(int meshid, int primid, const char* attrib, int vertexid) const;
+   void setVertexData(int meshid, int primid, const char* attrib, int vertexid, const glm::vec4& val);
 
  protected:
    void clear();

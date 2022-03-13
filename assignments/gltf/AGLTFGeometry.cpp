@@ -116,6 +116,37 @@ void AGLTFGeometry::setupMeshes() {
   }
 }
 
+int AGLTFGeometry::getNumMeshes() const {
+  return _geometry.size();
+}
+
+int AGLTFGeometry::getNumPrimitives(int meshid) const {
+  assert(meshid >= 0 && meshid < _geometry.size());
+  const std::vector<GLTFPrimitive*>& prims = _geometry.at(meshid);
+  return prims.size();
+}
+
+int AGLTFGeometry::getNumVertices(int meshid, int primid, const char* attrib) const {
+  assert(meshid >= 0 && meshid < _geometry.size());
+  const std::vector<GLTFPrimitive*>& prims = _geometry.at(meshid);
+  assert(primid >= 0 && primid < prims.size());
+  return prims[primid]->getNumber(attrib);
+}
+
+void AGLTFGeometry::setVertexData(int meshid, int primid, const char* attrib, int vertexid, const glm::vec4& v) {
+  assert(meshid >= 0 && meshid < _geometry.size());
+  const std::vector<GLTFPrimitive*>& prims = _geometry.at(meshid);
+  assert(primid >= 0 && primid < prims.size());
+  prims[primid]->setVertexData(attrib, vertexid, v);
+}
+
+glm::vec4 AGLTFGeometry::getVertexData(int meshid, int primid, const char* attrib, int vertexid) const {
+  assert(meshid >= 0 && meshid < _geometry.size());
+  const std::vector<GLTFPrimitive*>& prims = _geometry.at(meshid);
+  assert(primid >= 0 && primid < prims.size());
+  return prims[primid]->getVertexData(attrib, vertexid);
+}
+
 void AGLTFGeometry::drawMesh(agl::Renderer& renderer, int meshId) {
   const std::vector<GLTFPrimitive*>& prims = _geometry[meshId];
   for (int i = 0; i < prims.size(); i++) {
