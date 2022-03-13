@@ -46,7 +46,7 @@ void Framework::draw() {
   }
 
   if (_type == Perspective) {
-    drawFloor(2000, 20, 50);
+    drawFloor(2000, 200, 50);
   } 
 
 }
