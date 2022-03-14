@@ -216,6 +216,43 @@ void AGLTFGeometry::draw(agl::Renderer& renderer)
   }
 }
 
+int AGLTFGeometry::getNumSkins() const{
+  assert(_model);
+  return _model->skins.size();
+}
+
+int AGLTFGeometry::getNumSkinJoints(int skinid) const{
+  assert(_model);
+  const tinygltf::Skin& skin = _model->skins[skinid]; 
+  return skin.joints.size();
+}
+
+std::string AGLTFGeometry::getJointName(int skinid, int jointid) const {
+  const tinygltf::Skin& skin = _model->skins[skinid]; 
+  
+  int nodeId = skin.joints[jointid];
+  const tinygltf::Node& joint = _model->nodes[nodeId];
+  return joint.name; 
+}
+
+glm::mat4 AGLTFGeometry::getInverseBindMatrix(int skinid, int jointid) const {
+  const tinygltf::Skin& skin = _model->skins[skinid]; 
+
+  int id = skin.inverseBindMatrices;
+  assert(id != -1);
+  
+  const tinygltf::Accessor& accessor = _model->accessors[id];
+  const tinygltf::BufferView& view = _model->bufferViews[accessor.bufferView];
+  const tinygltf::Buffer& raw = _model->buffers[view.buffer];
+
+  // ASN TODO: Should only copy the matrix I need
+  std::vector<mat4> ibm(accessor.count);
+  memcpy((void*) (ibm.data()), 
+    raw.data.data() + view.byteOffset + accessor.byteOffset, view.byteLength);
+
+  return ibm[jointid];
+}
+
 void AGLTFGeometry::draw(agl::Renderer& renderer, const atk::Skeleton& skeleton)
 {
   if (!_model || _model->skins.size() == 0) return;
@@ -229,6 +266,7 @@ void AGLTFGeometry::draw(agl::Renderer& renderer, const atk::Skeleton& skeleton)
   const tinygltf::BufferView& view = _model->bufferViews[accessor.bufferView];
   const tinygltf::Buffer& raw = _model->buffers[view.buffer];
 
+  // ASN TODO: Should only do this once
   std::vector<mat4> ibm(accessor.count);
   memcpy((void*) (ibm.data()), 
     raw.data.data() + view.byteOffset + accessor.byteOffset, view.byteLength);

@@ -140,6 +140,23 @@ class GLTFPrimitive : public agl::Mesh {
     return accessor.count;
   }
 
+
+  int getAccessorComponentTypeSize(const char* attribName) const {
+    assert(_model);
+    assert(_primitive.attributes.count(attribName));
+
+    int aid = _primitive.attributes.at(attribName);
+    const tinygltf::Accessor &accessor = _model->accessors[aid];
+    if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_SHORT) return 2;
+    else if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_INT) return 4;
+    else if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT) return 4;
+    else if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT) return 2;
+    else if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT) return 4;
+    std::cout << "ERROR: Invalid size - " << accessor.type << std::endl;
+
+    return -1;
+  }
+
   int getAccessorTypeSize(const char* attribName) const {
     assert(_model);
     assert(_primitive.attributes.count(attribName));
@@ -150,6 +167,9 @@ class GLTFPrimitive : public agl::Mesh {
     else if (accessor.type == TINYGLTF_TYPE_VEC2) return 2;
     else if (accessor.type == TINYGLTF_TYPE_VEC3) return 3;
     else if (accessor.type == TINYGLTF_TYPE_VEC4) return 4;
+    else if (accessor.type == TINYGLTF_TYPE_MAT2) return 4;
+    else if (accessor.type == TINYGLTF_TYPE_MAT3) return 9;
+    else if (accessor.type == TINYGLTF_TYPE_MAT4) return 16;
     std::cout << "ERROR: Invalid size - " << accessor.type << std::endl;
     return -1;
   }
@@ -163,17 +183,19 @@ class GLTFPrimitive : public agl::Mesh {
 
     const tinygltf::BufferView &bufferView = _model->bufferViews[accessor.bufferView];
     int byteStride = accessor.ByteStride(bufferView);
+    int typeSize = getAccessorComponentTypeSize(attribName);
     assert(byteStride != -1);
+    assert(typeSize != -1);
     assert(bufferView.target != 0);
 
     const tinygltf::Buffer &buffer = _model->buffers[bufferView.buffer];
-    GLfloat* data = (GLfloat*) &buffer.data.at(0) + bufferView.byteOffset + byteStride * id;
+    GLfloat* data = (GLfloat*) &buffer.data.at(0) + bufferView.byteOffset + byteStride/typeSize * id;
     for (int i = 0; i < getAccessorTypeSize(attribName); i++) {
       data[i] = val[i];
     }
     
     // asn: this is slow -- should do once
-    glBindBuffer(bufferView.target, _buffers[1]); // ASN: TODO: Assumes POSITION
+    glBindBuffer(bufferView.target, _buffers[_attribmap[attribName]]); 
     glBufferData(bufferView.target, bufferView.byteLength,
                   &buffer.data.at(0) + bufferView.byteOffset,
                   _isDynamic? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
@@ -188,12 +210,13 @@ class GLTFPrimitive : public agl::Mesh {
 
     const tinygltf::BufferView &bufferView = _model->bufferViews[accessor.bufferView];
     int byteStride = accessor.ByteStride(bufferView);
+    int typeSize = getAccessorComponentTypeSize(attribName);
+    assert(typeSize != -1);
     assert(byteStride != -1);
     assert(bufferView.target != 0);
 
     const tinygltf::Buffer &buffer = _model->buffers[bufferView.buffer];
-    GLfloat* data = (GLfloat*) &buffer.data.at(0) + bufferView.byteOffset + byteStride * id;
-    // ASN TODO: Type may differ based on accessor, e.g. indices verses float
+    GLfloat* data = (GLfloat*) &buffer.data.at(0) + bufferView.byteOffset + byteStride/typeSize * id;
 
     glm::vec4 result(0);
     for (int i = 0; i < getAccessorTypeSize(attribName); i++) {
@@ -277,6 +300,9 @@ class GLTFPrimitive : public agl::Mesh {
   bool _hasSkin = false;
   const tinygltf::Model* _model = 0; 
   tinygltf::Primitive _primitive; 
+  std::map<std::string,int> _attribmap = {
+    {"INDEX", 0}, {"POSITION", 1}, {"NORMAL", 2}, {"TEXTCOORD_0", 3}, {"JOINTS_0", 4}, {"WEIGHTS_0", 5}
+  };
 };
 
 #endif
