@@ -397,7 +397,7 @@ void AGLTFGeometry::print(bool printBuffers)
           std::cout << "buffer contents [" << p << "] = " << b[p] << '\n';
         }
         if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT) {
-          ushort* b = (ushort*)tmp_buffer;
+          unsigned short* b = (unsigned short*)tmp_buffer;
           std::cout << "buffer contents [" << p << "] = " << b[p] << '\n';
         }
         if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_INT) {
@@ -405,7 +405,7 @@ void AGLTFGeometry::print(bool printBuffers)
           std::cout << "buffer contents [" << p << "] = " << b[p] << '\n';
         }
         if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT) {
-          uint* b = (uint*)tmp_buffer;
+          unsigned int* b = (unsigned int*)tmp_buffer;
           std::cout << "buffer contents [" << p << "] = " << b[p] << '\n';
         }
         if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT) {

@@ -19,7 +19,7 @@ public:
          joint->setLocalTranslation(joint->getLocalTranslation());
       }
 
-      _geometry.load("../models/Mia/Mia-v2.0.glb"); 
+      _geometry.load("../models/cube.glb"); 
       _geometry.print();
       renderer.loadShader("skin", "../shaders/skin.vs", "../shaders/skin.fs");
       renderer.beginShader("skin");
