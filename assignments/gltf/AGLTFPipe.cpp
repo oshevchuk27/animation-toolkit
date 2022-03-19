@@ -14,7 +14,7 @@ public:
     virtual void setup() {
         
 
-        _geometry.load("../models/cube.glb");
+        _geometry.load("../models/pipe.glb");
         _geometry.print();
         
 
