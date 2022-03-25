@@ -29,6 +29,7 @@ public:
 
 
         for (int i = 0; i < numVertices(); i++) {
+      
 
             vec3 p = vec3(points[3 * i], points[3 * i + 1], points[3 * i + 2]);
 
@@ -262,8 +263,8 @@ public:
             }
             Joint* parent = skeleton.getByID(i)->getParent();
             if (i == skeleton.getNumJoints() - 1) {
-                parent->setLocalRotation(glm::angleAxis<float>(sin(1.5f * elapsedTime() + i), vec3(0, 0, 1)));
-               //parent->setLocalRotation(glm::angleAxis<float>(0.3f, vec3(0, 0, 1)));
+                //parent->setLocalRotation(glm::angleAxis<float>(sin(1.5f * elapsedTime() + i), vec3(0, 0, 1)));
+               parent->setLocalRotation(glm::angleAxis<float>(0.0f, vec3(0, 0, 1)));
 
                //parent->setLocalTranslation(vec3(1, 2, 0));
             }

@@ -10,5 +10,5 @@ target_link_libraries(ASkeletonTest ${LIBS})
 add_executable(AGLTFSimple AGLTFSimple.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
 target_link_libraries(AGLTFSimple ${LIBS})
 
-add_executable(AGLTFPipe AGLTFPipe.cpp AGLTFGeometry.cpp)
+add_executable(AGLTFPipe AGLTFPipe.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
 target_link_libraries(AGLTFPipe ${LIBS})

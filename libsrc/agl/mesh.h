@@ -64,6 +64,8 @@ class Mesh {
   bool _initialized = false;
   std::vector<GLuint> _buffers;   // vertex buffers
   std::vector<GLfloat> _data[5];  // State for dynamic meshes
+
+public:
   enum VertexAttribute {
     INDEX = 0,
     POSITION,

@@ -1,3 +1,4 @@
+#include <windows.h>
 #include "AGLTFGeometry.h"
 #include "agl/agl.h"
 #include <map>
@@ -397,7 +398,7 @@ void AGLTFGeometry::print(bool printBuffers)
           std::cout << "buffer contents [" << p << "] = " << b[p] << '\n';
         }
         if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT) {
-          unsigned short* b = (unsigned short*)tmp_buffer;
+          USHORT* b = (USHORT*)tmp_buffer;
           std::cout << "buffer contents [" << p << "] = " << b[p] << '\n';
         }
         if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_INT) {
@@ -405,7 +406,7 @@ void AGLTFGeometry::print(bool printBuffers)
           std::cout << "buffer contents [" << p << "] = " << b[p] << '\n';
         }
         if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT) {
-          unsigned int* b = (unsigned int*)tmp_buffer;
+          UINT* b = (UINT*)tmp_buffer;
           std::cout << "buffer contents [" << p << "] = " << b[p] << '\n';
         }
         if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT) {

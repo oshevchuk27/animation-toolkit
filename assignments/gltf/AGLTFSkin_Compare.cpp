@@ -37,7 +37,7 @@ public:
             for (int vid = 0; vid < numverts; vid++) {
 
                vec4 pos = _geometry.getVertexData(meshid, primid, "POSITION", vid);
-               //std::cout << elapsedTime() << " " << pos << std::endl;
+               std::cout << elapsedTime() << " " << pos << std::endl;
 
                pos[1] = sin(elapsedTime())*100;
                _geometry.setVertexData(meshid, primid, "POSITION", vid, pos);

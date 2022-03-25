@@ -155,8 +155,16 @@ public:
             idx += 6;
         }
 
+      
+
+        setIsDynamic(true);
+
         initBuffers(&el, &p, &n, &tex);
     }
+
+
+
+
 
 
    /*void update(float elapsedTime, Skeleton skeleton) {
@@ -405,6 +413,14 @@ public:
 
 
         renderer.mesh(_mesh);
+
+        setColor(vec3(1));
+
+
+        for (int i = 0; i < _mesh.numVertices(); i++) {
+            glm::vec3 p = glm::vec3(_mesh.vertexData(Mesh::POSITION, i));
+            drawSphere(p, 0.3);
+        }
 
 
         renderer.pop();
