@@ -12,17 +12,17 @@ public:
    }
 
    virtual void setup() {
-      loadMotion("../motions/thread.bvh");
+      loadMotion("../motions/Mia/gesture.bvh");
       for (int i = 0; i < _skeleton.getNumJoints(); i++)
       {
          atk::Joint* joint = _skeleton.getByID(i);
          joint->setLocalTranslation(joint->getLocalTranslation());
       }
 
-      _geometry.load("../models/thread.glb"); 
+      _geometry.load("../models/Mia/Mia-v2.0.glb"); 
        
       _geometry.print();
-      /*renderer.loadShader("skin", "../shaders/skin.vs", "../shaders/skin.fs");
+      renderer.loadShader("skin", "../shaders/skin.vs", "../shaders/skin.fs");
       renderer.beginShader("skin");
       renderer.setUniform("Gamma", 0.8f);
       renderer.setUniform("Material.specular", 1.0f, 1.0f, 1.0f);
@@ -40,33 +40,28 @@ public:
 
       renderer.setUniform("DetailTexture.enabled", false);
       renderer.setUniform("DetailTexture.offset", vec2(0.0f));
-      renderer.setUniform("DetailTexture.tile", vec2(1.0f));*/
+      renderer.setUniform("DetailTexture.tile", vec2(1.0f));
    }
 
    virtual void scene() {
       _motion.update(_skeleton, elapsedTime());
 
-      //renderer.beginShader("skin");
+      renderer.beginShader("skin");
 
     
   
 
-    setColor(vec4(1));
-    renderer.push();
-    // renderer.translate(vec3(0.5, 0.3, 0.7));
+     setColor(vec4(1));
+     renderer.push();
+     renderer.translate(vec3(0.5, 0.3, 0.7));
 
-    //renderer.rotate(-3.14/2.0, vec3(1,0,0));
-    renderer.scale(vec3(25));
-    _geometry.draw(renderer, _skeleton);
-    renderer.pop();
+     renderer.rotate(-3.14/2.0, vec3(1,0,0));
+     renderer.scale(vec3(100));
+     _geometry.draw(renderer, _skeleton);
+     renderer.pop();
 
  
-
-
-
-         
-      
-      //renderer.endShader();
+     renderer.endShader();
    }
 
    virtual void keyPress(unsigned char key, int specialKey, int x, int y) {

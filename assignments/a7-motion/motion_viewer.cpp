@@ -106,7 +106,7 @@ int main(int argc, char** argv) {
     MotionViewer viewer;
  
    if (argc == 1) {
-       viewer.setFileName("../motions/Beta/jump.bvh");
+       viewer.setFileName("../motions/thread.bvh");
    }
    else {
        viewer.setFileName(argv[1]);

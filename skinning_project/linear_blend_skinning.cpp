@@ -160,14 +160,6 @@ public:
         std::vector<GLfloat> weights;
         Transform restBone1;
         Transform restBone2;
-
-
-       
-
-
-
-
-
 };
 
 

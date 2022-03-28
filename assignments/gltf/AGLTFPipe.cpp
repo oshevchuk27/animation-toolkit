@@ -34,7 +34,7 @@ public:
         //_geometry.load("../models/warrok.glb");
         //_geometry.load("../models/two-shapes.gltf");
         _geometry.load("../models/pipe.glb");
-        _geometry.print(true);
+       // _geometry.print(true);
 
         RestBone1Transform = _skeleton.getByName("joint0")->getLocal2Global();
         RestBone1Rot = RestBone1Transform.r();
@@ -71,9 +71,9 @@ public:
 
                    
 
-                    vec4 weights = _geometry.getVertexData(meshid, primid, "WEIGHTS_0", vid);
+                    //vec4 weights = _geometry.getVertexData(meshid, primid, "WEIGHTS_0", vid);
 
-                    vec4 joints = _geometry.getVertexData(meshid, primid, "JOINTS_0", vid);
+                    //vec4 joints = _geometry.getVertexData(meshid, primid, "JOINTS_0", vid);
 
                     
 
@@ -128,7 +128,7 @@ public:
         renderer.push();
         //renderer.rotate(-3.14 / 2.0, vec3(1, 0, 0));
         //renderer.rotate(1.5708, vec3(1, 0, 0));
-        renderer.scale(vec3(100));
+        renderer.scale(vec3(170, 50, 170));
         _geometry.draw(renderer);
         renderer.pop();
         //renderer.endShader();
