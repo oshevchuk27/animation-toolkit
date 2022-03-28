@@ -136,7 +136,7 @@ public:
         ASkeletonDrawer drawer;
         drawer.setJointRadius(0.05);
         drawer.setScale(100);
-        //drawer.draw(renderer, _skeleton);
+        drawer.draw(renderer, _skeleton);
     }
 
 private:
