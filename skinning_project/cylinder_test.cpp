@@ -20,14 +20,14 @@ using glm::quat;
 class NewCylinder : public agl::TriangleMesh {
 public:
 
-    NewCylinder::NewCylinder(float r, float len, GLuint nSlices) {
+    NewCylinder(float r, float len, GLuint nSlices) {
         _r1 = r;
         _r2 = r;
         _length = len;
         _nSlices = nSlices;
     }
 
-    NewCylinder::NewCylinder(float r1, float r2, float len, GLuint nSlices) {
+    NewCylinder(float r1, float r2, float len, GLuint nSlices) {
         _r1 = r1;
         _r2 = r2;
         _length = len;
@@ -35,11 +35,11 @@ public:
     }
 
 
-    void NewCylinder::init() {
+    void init() {
         computeMesh(_r1, _r2, _length, _nSlices);
     }
 
-    void NewCylinder::computeMesh(float r1, float r2, float len, GLuint nSlices) {
+    void computeMesh(float r1, float r2, float len, GLuint nSlices) {
         int nVerts = (nSlices + 1) * 2 + nSlices * 2;
 
         // num top triangles = nSlices

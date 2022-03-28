@@ -12,3 +12,6 @@ target_link_libraries(AGLTFSimple ${LIBS})
 
 add_executable(AGLTFPipe AGLTFPipe.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
 target_link_libraries(AGLTFPipe ${LIBS})
+
+add_executable(AGLTFMia AGLTFMia.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
+target_link_libraries(AGLTFMia ${LIBS})
