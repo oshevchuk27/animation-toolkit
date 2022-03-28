@@ -1,6 +1,7 @@
 #include "atk/toolkit.h"
 #include "atkui/framework.h"
 #include "AGLTFGeometry.h"
+#include "ASkeletonDrawer.h"
 
 using namespace atk;
 using namespace std;
@@ -22,7 +23,7 @@ public:
         _geometry.load("../models/thread.glb");
 
         //_geometry.print();
-        /*renderer.loadShader("skin", "../shaders/skin.vs", "../shaders/skin.fs");
+        renderer.loadShader("skin", "../shaders/skin.vs", "../shaders/skin.fs");
         renderer.beginShader("skin");
         renderer.setUniform("Gamma", 0.8f);
         renderer.setUniform("Material.specular", 1.0f, 1.0f, 1.0f);
@@ -40,13 +41,13 @@ public:
 
         renderer.setUniform("DetailTexture.enabled", false);
         renderer.setUniform("DetailTexture.offset", vec2(0.0f));
-        renderer.setUniform("DetailTexture.tile", vec2(1.0f));*/
+        renderer.setUniform("DetailTexture.tile", vec2(1.0f));
     }
 
     virtual void scene() {
-        _motion.update(_skeleton, elapsedTime());
+        //_motion.update(_skeleton, elapsedTime());
 
-        //renderer.beginShader("skin");
+        renderer.beginShader("skin");
 
 
 
@@ -56,12 +57,16 @@ public:
         // renderer.translate(vec3(0.5, 0.3, 0.7));
 
         //renderer.rotate(-3.14/2.0, vec3(1,0,0));
-        renderer.scale(vec3(10));
+       // renderer.scale(vec3(10));
         _geometry.draw(renderer, _skeleton);
         renderer.pop();
 
 
-        //renderer.endShader();
+        renderer.endShader();
+
+        setColor(vec3(0));
+        ASkeletonDrawer drawer;
+        drawer.draw(renderer, _skeleton);
     }
 
     virtual void keyPress(unsigned char key, int specialKey, int x, int y) {

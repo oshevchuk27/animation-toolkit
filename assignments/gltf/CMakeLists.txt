@@ -19,4 +19,5 @@ target_link_libraries(AGLTFThread ${LIBS})
 add_executable(AGLTFHand AGLTFHand.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
 target_link_libraries(AGLTFHand ${LIBS})
 
-
+add_executable(AGLTFMia AGLTFMia.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
+target_link_libraries(AGLTFMia ${LIBS})

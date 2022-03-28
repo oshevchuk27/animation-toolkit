@@ -63,7 +63,7 @@ class Mesh {
   bool _isDynamic = false;
   bool _initialized = false;
   std::vector<GLuint> _buffers;   // vertex buffers
-  std::vector<GLfloat> _data[5];  // State for dynamic meshes
+  std::vector<GLfloat> _data[6];  // State for dynamic meshes
 
 public:
   enum VertexAttribute {

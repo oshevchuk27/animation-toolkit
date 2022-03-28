@@ -19,40 +19,41 @@ public:
          joint->setLocalTranslation(joint->getLocalTranslation());
       }
 
-      //_geometry.load("../models/cube.glb"); 
       _geometry.load("../models/Mia/Mia-v2.0.glb"); 
       _geometry.print();
-      
+
+      renderer.loadShader("skin", "../shaders/skin.vs", "../shaders/skin.fs");
+      renderer.beginShader("skin");
+      renderer.setUniform("Gamma", 0.8f);
+      renderer.setUniform("Material.specular", 1.0f, 1.0f, 1.0f);
+      renderer.setUniform("Material.diffuse", 1.0f, 1.0f, 1.0f);
+      renderer.setUniform("Material.ambient", 0.1f, 0.1f, 0.1f);
+      renderer.setUniform("Material.shininess", 80.0f);
+      renderer.setUniform("Light.position", 100.0f, 100.0f, 100.0f, 1.0f);
+      renderer.setUniform("Light.color", 1.0f, 1.0f, 1.0f);
+      renderer.setUniform("Fog.enabled", false);
+      renderer.setUniform("HasUV", false);
+
+      renderer.setUniform("MainTexture.enabled", false);
+      renderer.setUniform("MainTexture.offset", vec2(0.0f));
+      renderer.setUniform("MainTexture.tile", vec2(1.0f));
+
+      renderer.setUniform("DetailTexture.enabled", false);
+      renderer.setUniform("DetailTexture.offset", vec2(0.0f));
+      renderer.setUniform("DetailTexture.tile", vec2(1.0f));
    }
 
    virtual void scene() {
-
       _motion.update(_skeleton, elapsedTime());
 
-      // modify mesh
-      int nummesh = _geometry.getNumMeshes();
-      for (int meshid = 0; meshid < nummesh; meshid++) {
-         int numprims = _geometry.getNumPrimitives(meshid);
-         for (int primid = 0; primid < numprims; primid++) {
-
-            int numverts = _geometry.getNumVertices(meshid, primid, "POSITION");
-            for (int vid = 0; vid < numverts; vid++) {
-
-               vec4 pos = _geometry.getVertexData(meshid, primid, "POSITION", vid);
-               //std::cout << pos << std::endl;
-
-               pos[1] = sin(elapsedTime())*100;
-               _geometry.setVertexData(meshid, primid, "POSITION", vid, pos);
-            }
-         }
-      }
-
-
-      setColor(vec4(1, 1, 1, 1));
+      renderer.beginShader("skin");
+      setColor(vec4(1));
       renderer.push();
+      renderer.rotate(-3.14 / 2.0, vec3(1, 0, 0));
       renderer.scale(vec3(100));
-      _geometry.draw(renderer);
+      _geometry.draw(renderer, _skeleton);
       renderer.pop();
+      renderer.endShader();
    }
 
    virtual void keyPress(unsigned char key, int specialKey, int x, int y) {

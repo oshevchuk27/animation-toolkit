@@ -92,29 +92,29 @@ class GLTFPrimitive : public agl::Mesh {
 
     // Position
     glBindBuffer(GL_ARRAY_BUFFER, posBuf);
-    setupVertexAttribArray(0, primitive.attributes.at("POSITION"));
+    setupVertexAttribArray(0, "POSITION");
 
     // Normal
     if (normBuf > 0) {
       glBindBuffer(GL_ARRAY_BUFFER, normBuf);
-      setupVertexAttribArray(1, primitive.attributes.at("NORMAL"));
+      setupVertexAttribArray(1, "NORMAL");
     }
 
     // Tex coords
     if (texBuf > 0) {
       glBindBuffer(GL_ARRAY_BUFFER, texBuf);
-      setupVertexAttribArray(2, primitive.attributes.at("TEXCOORD_0"));
+      setupVertexAttribArray(2, "TEXCOORD_0");
     }
 
     // Skinning
     if (jntBuf > 0) {
       glBindBuffer(GL_ARRAY_BUFFER, jntBuf);
-      setupVertexAttribArray(3, primitive.attributes.at("JOINTS_0"));
+      setupVertexAttribArray(3, "JOINTS_0");
     }
 
     if (wgtBuf > 0) {
       glBindBuffer(GL_ARRAY_BUFFER, wgtBuf);
-      setupVertexAttribArray(4, primitive.attributes.at("WEIGHTS_0"));
+      setupVertexAttribArray(4, "WEIGHTS_0");
     }
 
     glBindVertexArray(0);
@@ -177,51 +177,38 @@ class GLTFPrimitive : public agl::Mesh {
   void setVertexData(const char* attribName, int id, const glm::vec4& val) {
     assert(_model);
     assert(_primitive.attributes.count(attribName));
-
-    int aid = _primitive.attributes.at(attribName);
-    const tinygltf::Accessor &accessor = _model->accessors[aid];
-
-    const tinygltf::BufferView &bufferView = _model->bufferViews[accessor.bufferView];
-    int byteStride = accessor.ByteStride(bufferView);
-    int typeSize = getAccessorComponentTypeSize(attribName);
-    assert(byteStride != -1);
-    assert(typeSize != -1);
-    assert(bufferView.target != 0);
-
-    const tinygltf::Buffer &buffer = _model->buffers[bufferView.buffer];
-    GLfloat* data = (GLfloat*) &buffer.data.at(0) + bufferView.byteOffset + byteStride/typeSize * id;
-    for (int i = 0; i < getAccessorTypeSize(attribName); i++) {
-      data[i] = val[i];
+    int size = getAccessorTypeSize(attribName); 
+    assert(id < size * _count);
+    // ASN TODO: Handle stride?
+    int va = _attribmap[attribName];
+    for (int i = 0; i < size; i++) { 
+      int idx = id*size + i;
+      _data[va][idx] = val[i];
     }
     
     // asn: this is slow -- should do once
-    glBindBuffer(bufferView.target, _buffers[_attribmap[attribName]]); 
-    glBufferData(bufferView.target, bufferView.byteLength,
-                  &buffer.data.at(0) + bufferView.byteOffset,
-                  _isDynamic? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+    int aid = _primitive.attributes.at(attribName);
+    const tinygltf::Accessor &accessor = _model->accessors[aid];
+    const tinygltf::BufferView& bufferView = _model->bufferViews[accessor.bufferView];
+  
+    glBindBuffer(bufferView.target, _buffers[va]);
+    glBufferData(bufferView.target, _data[va].size() * sizeof(GLfloat),
+      _data[va].data(), GL_DYNAMIC_DRAW);
   }
 
   glm::vec4 getVertexData(const char* attribName, int id) {
     assert(_model);
     assert(_primitive.attributes.count(attribName));
 
-    int aid = _primitive.attributes.at(attribName);
-    const tinygltf::Accessor &accessor = _model->accessors[aid];
-
-    const tinygltf::BufferView &bufferView = _model->bufferViews[accessor.bufferView];
-    int byteStride = accessor.ByteStride(bufferView);
-    int typeSize = getAccessorComponentTypeSize(attribName);
-    assert(typeSize != -1);
-    assert(byteStride != -1);
-    assert(bufferView.target != 0);
-
-    const tinygltf::Buffer &buffer = _model->buffers[bufferView.buffer];
-    GLfloat* data = (GLfloat*) &buffer.data.at(0) + bufferView.byteOffset + byteStride/typeSize * id;
-
+    int size = getAccessorTypeSize(attribName); 
+    assert(id < size * _count);
+    // ASN TODO: Handle stride?
+    int va = _attribmap[attribName];
     glm::vec4 result(0);
-    for (int i = 0; i < getAccessorTypeSize(attribName); i++) {
-      result[i] = data[i];
-    }
+    for (int i = 0; i < size; i++) { 
+      int idx = id*size + i;
+      result[i] = _data[va][idx];
+    } 
     return result;
   } 
 
@@ -251,7 +238,8 @@ class GLTFPrimitive : public agl::Mesh {
     return -1;
   }
 
-  void setupVertexAttribArray(int layoutId, int id) {
+  void setupVertexAttribArray(int layoutId, const char* attribName) {
+    int id = _primitive.attributes.at(attribName);
     const tinygltf::Accessor &accessor = _model->accessors[id];
     int size = 1;
     if (accessor.type == TINYGLTF_TYPE_SCALAR) {
@@ -276,6 +264,18 @@ class GLTFPrimitive : public agl::Mesh {
     CheckErrors("vertex attrib pointer");
     glEnableVertexAttribArray(layoutId);
     CheckErrors("enable vertex attrib array");
+
+    if (_isDynamic && accessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT) {
+      const tinygltf::Buffer &buffer = _model->buffers[bufferView.buffer];
+      const unsigned char *tmp_buffer = &buffer.data.at(0) + bufferView.byteOffset + accessor.byteOffset;
+      
+      // ASN TODO: Handle stride
+      for(size_t p = 0; p < accessor.count * size; p++) {
+        float* b = (float*)tmp_buffer;
+        _data[_attribmap[attribName]].push_back(b[p]);
+      }
+      std::cout << "Saving data for attribute " << layoutId << std::endl;
+    }
   }
 
   virtual void init() {
@@ -301,7 +301,7 @@ class GLTFPrimitive : public agl::Mesh {
   const tinygltf::Model* _model = 0; 
   tinygltf::Primitive _primitive; 
   std::map<std::string,int> _attribmap = {
-    {"INDEX", 0}, {"POSITION", 1}, {"NORMAL", 2}, {"TEXTCOORD_0", 3}, {"JOINTS_0", 4}, {"WEIGHTS_0", 5}
+    {"INDEX", 0}, {"POSITION", 1}, {"NORMAL", 2}, {"TEXCOORD_0", 3}, {"JOINTS_0", 4}, {"WEIGHTS_0", 5}
   };
 };
 
