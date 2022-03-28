@@ -265,17 +265,41 @@ class GLTFPrimitive : public agl::Mesh {
     glEnableVertexAttribArray(layoutId);
     CheckErrors("enable vertex attrib array");
 
-    if (_isDynamic && accessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT) {
+    if (_isDynamic) {
       const tinygltf::Buffer &buffer = _model->buffers[bufferView.buffer];
       const unsigned char *tmp_buffer = &buffer.data.at(0) + bufferView.byteOffset + accessor.byteOffset;
-      
+
       // ASN TODO: Handle stride
       for(size_t p = 0; p < accessor.count * size; p++) {
-        float* b = (float*)tmp_buffer;
-        _data[_attribmap[attribName]].push_back(b[p]);
+        if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_SHORT) {
+          short* b = (short*)tmp_buffer;
+          _data[_attribmap[attribName]].push_back((float) b[p]);
+        }
+        else if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT) {
+          uint16_t* b = (uint16_t*)tmp_buffer;
+          _data[_attribmap[attribName]].push_back((float) b[p]);
+        }
+        else if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_INT) {
+          int* b = (int*)tmp_buffer;
+          _data[_attribmap[attribName]].push_back((float) b[p]);
+        }
+        else if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT) {
+          uint32_t* b = (uint32_t*)tmp_buffer;
+          _data[_attribmap[attribName]].push_back((float) b[p]);
+        }
+        else if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE) {
+          uint8_t* b = (uint8_t*)tmp_buffer;
+          _data[_attribmap[attribName]].push_back((float) b[p]);
+
+        }
+        else if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT) {
+          float* b = (float*)tmp_buffer;
+          _data[_attribmap[attribName]].push_back(b[p]);
+
+        }
       }
       std::cout << "Saving data for attribute " << layoutId << std::endl;
-    }
+    } 
   }
 
   virtual void init() {

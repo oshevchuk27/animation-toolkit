@@ -46,7 +46,24 @@ public:
         RestBone2Rot = RestBone2Transform.r();
         RestBone2Trans = RestBone2Transform.t();
 
-        //renderer.loadShader("skin", "../shaders/skin.vs", "../shaders/skin.fs");
+        int nummesh = _geometry.getNumMeshes();
+
+        for (int meshid = 0; meshid < nummesh; meshid++) {
+            int numprims = _geometry.getNumPrimitives(meshid);
+           
+            for (int primid = 0; primid < numprims; primid++) {
+                int numverts = _geometry.getNumVertices(meshid, primid, "POSITION");
+
+                for (int vid = 0; vid < numverts; vid++) {
+
+                    vec4 weights = _geometry.getVertexData(meshid, primid, "WEIGHTS_0", vid);
+                    vec4 joints = _geometry.getVertexData(meshid, primid, "JOINTS_0", vid);
+                    std::cout << weights << std::endl;
+                    //std::cout << joints << std::endl;
+
+                }
+            }
+        }
     }
 
     virtual void scene() {
@@ -57,34 +74,53 @@ public:
         _skeleton.getByID(1)->setLocalRotation(glm::angleAxis(_factor, vec3(0, 0, 1)));
         _skeleton.fk();
 
+        //setColor(vec3(0, 1, 0));
+        renderer.push();
+        //renderer.rotate(-3.14 / 2.0, vec3(1, 0, 0));
+        //renderer.rotate(1.5708, vec3(1, 0, 0));
+        renderer.scale(vec3(170, 50, 170));
+        _geometry.draw(renderer);
+        renderer.pop();
 
-        int nummesh = _geometry.getNumMeshes();
+        ASkeletonDrawer drawer;
+        drawer.setJointRadius(0.05);
+        drawer.setScale(100);
+        drawer.draw(renderer, _skeleton);
+    }
 
-        for (int meshid = 0; meshid < nummesh; meshid++) {
-            int numprims = _geometry.getNumPrimitives(meshid);
+private:
 
-           
-            for (int primid = 0; primid < numprims; primid++) {
-                int numverts = _geometry.getNumVertices(meshid, primid, "POSITION");
+    float _factor = 1;
+    Skeleton _skeleton;
+    AGLTFGeometry _geometry;
 
-                for (int vid = 0; vid < numverts; vid++) {
+    Transform  RestBone1Transform;
+    Transform  RestBone2Transform;
 
-                   
+    quat RestBone1Rot;
+    vec3 RestBone1Trans;
+    quat RestBone2Rot;
+    vec3 RestBone2Trans;
+};
 
-                    //vec4 weights = _geometry.getVertexData(meshid, primid, "WEIGHTS_0", vid);
+int main(int argc, char** argv) {
+    AGLTFSimple viewer;
+    viewer.run();
+}
 
-                    //vec4 joints = _geometry.getVertexData(meshid, primid, "JOINTS_0", vid);
 
-                    
 
-                    /*mat4 skinMatrix = weights[0] * _geometry.getInverseBindMatrix(0, joints[0]) +
+                    /*
+                    vec3 pos = _geometry.getVertexData(meshid, primid, "POSITION", vid, 0));
+                    mat4 skinMatrix = weights[0] * _geometry.getInverseBindMatrix(0, joints[0]) +
                         weights[1] * _geometry.getInverseBindMatrix(1, joints[1]) +
                         weights[2] * _geometry.getInverseBindMatrix(2, joints[2]) +
                         weights[3] * _geometry.getInverseBindMatrix(3, joints[3]);
 
-                    vec4 newpos = skinMatrix * pos;*/
+                    vec4 newpos = skinMatrix * pos;
+                    //_geometry.setVertexData(meshid, primid, "POSITION", vid, vec4(newpos, 0));
 
-                   /*quat Bone1Rot = _skeleton.getByName("joint0")->getLocal2Global().r();
+                   quat Bone1Rot = _skeleton.getByName("joint0")->getLocal2Global().r();
                     vec3 Bone1Trans = _skeleton.getByName("joint0")->getLocal2Global().t();
 
                     dualquat Bone1 = dualquat(Bone1Rot, Bone1Trans);
@@ -109,54 +145,5 @@ public:
                     vec3 newpos = newquat * pos
 
 
-                    _geometry.setVertexData(meshid, primid, "POSITION", vid, vec4(newpos, 0));*/
-
-
-                }
-
-
-            }
-
-
-        }
-
-
-
-
-        //renderer.beginShader("skin");
-        //setColor(vec3(0, 1, 0));
-        renderer.push();
-        //renderer.rotate(-3.14 / 2.0, vec3(1, 0, 0));
-        //renderer.rotate(1.5708, vec3(1, 0, 0));
-        renderer.scale(vec3(170, 50, 170));
-        _geometry.draw(renderer);
-        renderer.pop();
-        //renderer.endShader();
-
-        ASkeletonDrawer drawer;
-        drawer.setJointRadius(0.05);
-        drawer.setScale(100);
-        //drawer.draw(renderer, _skeleton);
-    }
-
-private:
-
-    float _factor = 1;
-    Skeleton _skeleton;
-    AGLTFGeometry _geometry;
-
-    Transform  RestBone1Transform;
-    Transform  RestBone2Transform;
-
-    quat RestBone1Rot;
-    vec3 RestBone1Trans;
-    quat RestBone2Rot;
-    vec3 RestBone2Trans;
-};
-
-int main(int argc, char** argv) {
-    AGLTFSimple viewer;
-    viewer.run();
-}
-
-
+                    _geometry.setVertexData(meshid, primid, "POSITION", vid, vec4(newpos, 0));
+                    */
