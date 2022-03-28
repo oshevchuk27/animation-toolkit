@@ -16,6 +16,9 @@ target_link_libraries(AGLTFPipe ${LIBS})
 add_executable(AGLTFThread AGLTFThread.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
 target_link_libraries(AGLTFThread ${LIBS})
 
+add_executable(AGLTFThread_Shader AGLTFThread_Shader.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
+target_link_libraries(AGLTFThread_Shader ${LIBS})
+
 add_executable(AGLTFHand AGLTFHand.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
 target_link_libraries(AGLTFHand ${LIBS})
 
