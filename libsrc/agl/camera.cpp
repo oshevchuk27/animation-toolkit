@@ -75,6 +75,7 @@ void Camera::set(const vec3& eyepos, const vec3& look, const vec3& up) {
 
   mPitch = atan2(-mN[1], -mN[2]);
   mHeading = atan2(-mN[2], -mN[0]);
+  mActionState = 0;
 }
 
 void Camera::_set(const vec3& eyepos, const vec3& look, const vec3& up) {
