@@ -18,12 +18,13 @@ public:
 
     virtual void setup()
     {
+
         Joint* root = new Joint("joint0");
         Joint* joint1 = new Joint("joint1");
         Joint* joint2 = new Joint("joint2");
         root->setLocalTranslation(vec3(0, 0, 0));
-        joint1->setLocalTranslation(vec3(0, 2.20, 0));
-        joint2->setLocalTranslation(vec3(0, 2.20, 0));
+        joint1->setLocalTranslation(vec3(0, 0.75, 0));
+        joint2->setLocalTranslation(vec3(0, 0.75, 0));
         _skeleton.addJoint(root);
         _skeleton.addJoint(joint1, root);
         _skeleton.addJoint(joint2, joint1);
@@ -33,37 +34,17 @@ public:
         //_geometry.load("../models/Borb.glb");
         //_geometry.load("../models/warrok.glb");
         //_geometry.load("../models/two-shapes.gltf");
-        _geometry.load("../models/pipe.glb");
+        _geometry.load("../models/cylinder.glb");
        // _geometry.print(true);
 
         RestBone1Transform = _skeleton.getByName("joint0")->getLocal2Global();
-        RestBone1Rot = RestBone1Transform.r();
-        RestBone1Trans = RestBone1Transform.t();
+       
 
 
         RestBone2Transform = _skeleton.getByName("joint1")->getLocal2Global();
 
-        RestBone2Rot = RestBone2Transform.r();
-        RestBone2Trans = RestBone2Transform.t();
 
-        int nummesh = _geometry.getNumMeshes();
-
-        for (int meshid = 0; meshid < nummesh; meshid++) {
-            int numprims = _geometry.getNumPrimitives(meshid);
-           
-            for (int primid = 0; primid < numprims; primid++) {
-                int numverts = _geometry.getNumVertices(meshid, primid, "POSITION");
-
-                for (int vid = 0; vid < numverts; vid++) {
-
-                    vec4 weights = _geometry.getVertexData(meshid, primid, "WEIGHTS_0", vid);
-                    vec4 joints = _geometry.getVertexData(meshid, primid, "JOINTS_0", vid);
-                    std::cout << weights << std::endl;
-                    //std::cout << joints << std::endl;
-
-                }
-            }
-        }
+      
     }
 
     virtual void scene() {
@@ -74,11 +55,71 @@ public:
         _skeleton.getByID(1)->setLocalRotation(glm::angleAxis(_factor, vec3(0, 0, 1)));
         _skeleton.fk();
 
+
+
+        int nummesh = _geometry.getNumMeshes();
+
+        for (int meshid = 0; meshid < nummesh; meshid++) {
+            int numprims = _geometry.getNumPrimitives(meshid);
+
+            for (int primid = 0; primid < numprims; primid++) {
+                int numverts = _geometry.getNumVertices(meshid, primid, "POSITION");
+
+                for (int vid = 0; vid < numverts; vid++) {
+
+                    vec4 weights = _geometry.getVertexData(meshid, primid, "WEIGHTS_0", vid);
+                    vec4 joints = _geometry.getVertexData(meshid, primid, "JOINTS_0", vid);
+
+                    //std::cout << joints << std::endl;
+                    //std::cout << "matrix" << _geometry.getInverseBindMatrix(0, joints[0]) << endl;
+                    vec4 pos = _geometry.getVertexData(meshid, primid, "POSITION", vid);
+
+
+                    /*mat4 skinMatrix = weights[0] * _geometry.getInverseBindMatrix(0, joints[0]) +
+                         weights[1] * _geometry.getInverseBindMatrix(0, joints[1]) +
+                         weights[2] * _geometry.getInverseBindMatrix(0, joints[2]) +
+                         weights[3] * _geometry.getInverseBindMatrix(0, joints[3]); */
+
+                    Transform transJoint1 = _skeleton.getByName("joint0")->getLocal2Global() *
+                        RestBone1Transform.inverse();
+
+                    Transform transJoint2 = _skeleton.getByName("joint1")->getLocal2Global() *
+                        RestBone2Transform.inverse();
+
+                    vec3 newpos;
+
+
+                    if (joints[0] == 0 && joints[1] == 1) {
+                        newpos = weights[0] * transJoint1.transformPoint(vec3(pos[0], pos[1], pos[2])) +
+                            weights[1] * transJoint2.transformPoint(vec3(pos[0], pos[1], pos[2]));
+                    }
+                    else if (joints[0] == 1 && joints[1] == 0) {
+                        newpos = weights[0] * transJoint2.transformPoint(vec3(pos[0], pos[1], pos[2])) +
+                            weights[1] * transJoint1.transformPoint(vec3(pos[0], pos[1], pos[2]));
+                    }
+
+                    
+
+                   // vec4 newpos = skinMatrix * pos;
+
+                    _geometry.setVertexData(meshid, primid, "POSITION", vid, vec4(newpos, 0));
+
+
+                    //weights = _geometry.getVertexData(meshid, primid, "WEIGHTS_0", vid);
+                    //std::cout << weights << std::endl;
+
+
+                }
+            }
+        }
+
         //setColor(vec3(0, 1, 0));
         renderer.push();
         //renderer.rotate(-3.14 / 2.0, vec3(1, 0, 0));
         //renderer.rotate(1.5708, vec3(1, 0, 0));
-        renderer.scale(vec3(170, 50, 170));
+        //renderer.scale(vec3(170, 50, 170));
+        renderer.translate(vec3(0, 50, 0));
+        renderer.scale(vec3(70));
         _geometry.draw(renderer);
         renderer.pop();
 
