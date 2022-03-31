@@ -19,8 +19,8 @@ public:
     virtual void setup()
     {
 
-        Joint* root = new Joint("Bone.001");
-        Joint* joint1 = new Joint("Bone");
+        Joint* root = new Joint("Bone");
+        Joint* joint1 = new Joint("Bone.001");
         Joint* joint2 = new Joint("Bone_End");
         root->setLocalTranslation(vec3(0, 0, 0));
         joint1->setLocalTranslation(vec3(0, 0.75, 0));
