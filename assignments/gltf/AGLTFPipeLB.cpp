@@ -19,9 +19,9 @@ public:
     virtual void setup()
     {
 
-        Joint* root = new Joint("joint0");
-        Joint* joint1 = new Joint("joint1");
-        Joint* joint2 = new Joint("joint2");
+        Joint* root = new Joint("Bone.001");
+        Joint* joint1 = new Joint("Bone");
+        Joint* joint2 = new Joint("Bone_End");
         root->setLocalTranslation(vec3(0, 0, 0));
         joint1->setLocalTranslation(vec3(0, 0.75, 0));
         joint2->setLocalTranslation(vec3(0, 0.75, 0));
@@ -35,15 +35,11 @@ public:
         //_geometry.load("../models/warrok.glb");
         //_geometry.load("../models/two-shapes.gltf");
         _geometry.load("../models/cylinder.glb");
-       // _geometry.print(true);
+        _origGeometry.load("../models/cylinder.glb"); // need to keep original vertices
+        _geometry.print();
 
-        RestBone1Transform = _skeleton.getByName("joint0")->getLocal2Global();
-       
-
-
-        RestBone2Transform = _skeleton.getByName("joint1")->getLocal2Global();
-
-
+        RestBone1Transform = _skeleton.getByName("Bone.001")->getLocal2Global();
+        RestBone2Transform = _skeleton.getByName("Bone")->getLocal2Global();
       
     }
 
@@ -54,7 +50,6 @@ public:
         _skeleton.getByID(0)->setLocalRotation(glm::angleAxis(0.0f, vec3(0, 0, 1)));
         _skeleton.getByID(1)->setLocalRotation(glm::angleAxis(_factor, vec3(0, 0, 1)));
         _skeleton.fk();
-
 
 
         int nummesh = _geometry.getNumMeshes();
@@ -72,53 +67,30 @@ public:
 
                     //std::cout << joints << std::endl;
                     //std::cout << "matrix" << _geometry.getInverseBindMatrix(0, joints[0]) << endl;
-                    vec4 pos = _geometry.getVertexData(meshid, primid, "POSITION", vid);
+                    // Need to use original vertices for calculations!
+                    vec4 pos = _origGeometry.getVertexData(meshid, primid, "POSITION", vid);
+                    pos[3] = 1; // homogeneous coordinate
 
-                    
-
-
-                    /*mat4 skinMatrix = weights[0] * _geometry.getInverseBindMatrix(0, joints[0]) +
-                         weights[1] * _geometry.getInverseBindMatrix(0, joints[1]) +
-                         weights[2] * _geometry.getInverseBindMatrix(0, joints[2]) +
-                         weights[3] * _geometry.getInverseBindMatrix(0, joints[3]); */
-
-                    Transform transJoint1 = _skeleton.getByName("joint0")->getLocal2Global() *
-                        RestBone1Transform.inverse();
-
-                    Transform transJoint2 = _skeleton.getByName("joint1")->getLocal2Global() *
-                        RestBone2Transform.inverse();
-
-                    vec3 newpos;
-
-
-                    if (joints[0] == 0 && joints[1] == 1) {
-                        newpos = weights[0] * transJoint1.transformPoint(vec3(pos[0], pos[1], pos[2])) +
-                            weights[1] * transJoint2.transformPoint(vec3(pos[0], pos[1], pos[2]));
-                    }
-                    else if (joints[0] == 1 && joints[1] == 0) {
-                        newpos = weights[0] * transJoint2.transformPoint(vec3(pos[0], pos[1], pos[2])) +
-                            weights[1] * transJoint1.transformPoint(vec3(pos[0], pos[1], pos[2]));
+                    vec4 newpos = vec4(0);
+                    for (int i = 0; i < 4; i++) {
+                      mat4 invMatrix = _geometry.getInverseBindMatrix(0, joints[i]);
+                      std::string name = _geometry.getJointName(0, (int) joints[i]);
+                      atk::Joint* joint = _skeleton.getByName(name); 
+                      if (!joint) std::cout << "Error: cannot find name! " << name << std::endl;
+                      
+                      mat4 local2global = joint->getLocal2Global().matrix();
+                      newpos += weights[i] * local2global * invMatrix * pos;
                     }
 
+                        //setColor(vec3(1));
+                        //drawSphere(newpos, 10);
 
-
-                    
-                        setColor(vec3(1));
-                        drawSphere(newpos, 10);
-
-
-                    
-                    
 
                    // vec4 newpos = skinMatrix * pos;
-
-                    _geometry.setVertexData(meshid, primid, "POSITION", vid, vec4(newpos, 0));
-
+                    _geometry.setVertexData(meshid, primid, "POSITION", vid, newpos);
 
                     //weights = _geometry.getVertexData(meshid, primid, "WEIGHTS_0", vid);
                     //std::cout << weights << std::endl;
-
-
                 }
             }
         }
@@ -130,7 +102,7 @@ public:
         //renderer.scale(vec3(170, 50, 170));
         renderer.translate(vec3(0, 50, 0));
         renderer.scale(vec3(70));
-        //_geometry.draw(renderer);
+        _geometry.draw(renderer);
         renderer.pop();
 
         ASkeletonDrawer drawer;
@@ -144,6 +116,7 @@ private:
     float _factor = 1;
     Skeleton _skeleton;
     AGLTFGeometry _geometry;
+    AGLTFGeometry _origGeometry;
 
     Transform  RestBone1Transform;
     Transform  RestBone2Transform;
@@ -152,6 +125,7 @@ private:
     vec3 RestBone1Trans;
     quat RestBone2Rot;
     vec3 RestBone2Trans;
+
 };
 
 int main(int argc, char** argv) {
