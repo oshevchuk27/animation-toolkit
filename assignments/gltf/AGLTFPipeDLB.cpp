@@ -19,12 +19,14 @@ public:
     virtual void setup()
     {
 
-        Joint* root = new Joint("joint0");
-        Joint* joint1 = new Joint("joint1");
-        Joint* joint2 = new Joint("joint2");
+       // lookAt(vec3(300), vec3(0));
+
+        Joint* root = new Joint("Bone");
+        Joint* joint1 = new Joint("Bone.001");
+        Joint* joint2 = new Joint("Bone_End");
         root->setLocalTranslation(vec3(0, 0, 0));
-        joint1->setLocalTranslation(vec3(0, 0.75, 0));
-        joint2->setLocalTranslation(vec3(0, 0.75, 0));
+        joint1->setLocalTranslation(vec3(0, 1, 0));
+        joint2->setLocalTranslation(vec3(0, 1, 0));
         _skeleton.addJoint(root);
         _skeleton.addJoint(joint1, root);
         _skeleton.addJoint(joint2, joint1);
@@ -34,18 +36,11 @@ public:
         //_geometry.load("../models/Borb.glb");
         //_geometry.load("../models/warrok.glb");
         //_geometry.load("../models/two-shapes.gltf");
-        _geometry.load("../models/cylinder.glb");
+        _geometry.load("../models/pipe1.glb");
+        _origGeometry.load("../models/pipe1.glb");
         // _geometry.print(true);
 
-        RestBone1Transform = _skeleton.getByName("joint0")->getLocal2Global();
-        RestBone1Rot = RestBone1Transform.r();
-        RestBone1Trans = RestBone1Transform.t();
-
-
-        RestBone2Transform = _skeleton.getByName("joint1")->getLocal2Global();
-
-        RestBone2Rot = RestBone2Transform.r();
-        RestBone2Trans = RestBone2Transform.t();
+        
 
 
 
@@ -53,14 +48,14 @@ public:
 
     virtual void scene() {
 
-        // try to edit vertices
-        _factor = 0.7 * sin(elapsedTime());
+        
+        _factor = 2.0 * sin(elapsedTime());
         _skeleton.getByID(0)->setLocalRotation(glm::angleAxis(0.0f, vec3(0, 0, 1)));
         _skeleton.getByID(1)->setLocalRotation(glm::angleAxis(_factor, vec3(0, 0, 1)));
         _skeleton.fk();
 
 
-
+        // try to edit vertices
         int nummesh = _geometry.getNumMeshes();
 
         for (int meshid = 0; meshid < nummesh; meshid++) {
@@ -77,59 +72,41 @@ public:
                     //std::cout << joints << std::endl;
                     //std::cout << "matrix" << _geometry.getInverseBindMatrix(0, joints[0]) << endl;
 
-                    vec4 pos = _geometry.getVertexData(meshid, primid, "POSITION", vid);
-
-                        setColor(vec3(1));
-                        drawSphere(pos, 50);
-                    
+                    vec4 pos = _origGeometry.getVertexData(meshid, primid, "POSITION", vid);
+                    pos[3] = 1;
 
 
+                    dualquat newquat = dualquat(glm::angleAxis(0.0f, vec3(0, 0, 1)), vec3(0));
 
-                    /*mat4 skinMatrix = weights[0] * _geometry.getInverseBindMatrix(0, joints[0]) +
-                         weights[1] * _geometry.getInverseBindMatrix(0, joints[1]) +
-                         weights[2] * _geometry.getInverseBindMatrix(0, joints[2]) +
-                         weights[3] * _geometry.getInverseBindMatrix(0, joints[3]); */
+                    for (int i = 0; i < 4; i++) {
 
+                        mat4 invMatrix = _geometry.getInverseBindMatrix(0, joints[i]);
+                        mat3 rotInvMatrix = mat3(vec3(invMatrix[0][0], invMatrix[1][0], invMatrix[2][0]),
+                            vec3(invMatrix[0][1], invMatrix[1][1], invMatrix[2][1]), vec3(invMatrix[0][2],
+                                invMatrix[1][2], invMatrix[2][2]));
+                        quat rotInvQuat = quat(rotInvMatrix);
+                        vec3 rotInvTrans = vec3(invMatrix[0][3], invMatrix[1][3], invMatrix[2][3]);
+                        dualquat invDQuat = dualquat(rotInvQuat, rotInvTrans);
+                        std::string name = _geometry.getJointName(0, (int)joints[i]);
+                        quat BoneRot = _skeleton.getByName(name)->getLocal2Global().r();
+                        vec3 BoneTrans = _skeleton.getByName(name)->getLocal2Global().t();
+                        dualquat Bone = dualquat(BoneRot, BoneTrans);
 
-                    quat Bone1Rot = _skeleton.getByName("joint0")->getLocal2Global().r();
-                    vec3 Bone1Trans = _skeleton.getByName("joint0")->getLocal2Global().t();
+                        newquat = newquat +  weights[i] * Bone * invDQuat;
 
-                    dualquat Bone1 = dualquat(Bone1Rot, Bone1Trans);
-
-
-                    quat Bone2Rot = _skeleton.getByName("joint1")->getLocal2Global().r();
-                    vec3 Bone2Trans = _skeleton.getByName("joint1")->getLocal2Global().t();
-
-                    dualquat Bone2 = dualquat(Bone2Rot, Bone2Trans);
-
-
-
-
-                    dualquat RestBone1 = dualquat(RestBone1Rot, RestBone1Trans);
-
-                    dualquat RestBone2 = dualquat(RestBone2Rot, RestBone2Trans);
-
-                   
-
-                    dualquat newquat;
-
-
-                    if (joints[0] == 0 && joints[1] == 1) {
-                        newquat = normalize(weights[0] * Bone1 * inverse(RestBone1) + weights[1] *
-                            Bone2 * inverse(RestBone2));
-                    }
-                    else if (joints[0] == 1 && joints[1] == 0) {
-                        newquat = normalize(weights[0] * Bone2 * inverse(RestBone2) + weights[1] *
-                            Bone1 * inverse(RestBone1));
                     }
 
-                    vec3 newpos = newquat * vec3(pos[0], pos[1], pos[2]);
+
+
+                    dualquat newquatnorm = normalize(newquat);
+
+                    vec4 newpos = newquatnorm * pos;
 
 
 
                     // vec4 newpos = skinMatrix * pos;
 
-                    _geometry.setVertexData(meshid, primid, "POSITION", vid, vec4(newpos, 0));
+                    _geometry.setVertexData(meshid, primid, "POSITION", vid, newpos);
 
 
                     //weights = _geometry.getVertexData(meshid, primid, "WEIGHTS_0", vid);
@@ -143,17 +120,20 @@ public:
         //setColor(vec3(0, 1, 0));
         renderer.push();
         //renderer.rotate(-3.14 / 2.0, vec3(1, 0, 0));
-        //renderer.rotate(1.5708, vec3(1, 0, 0));
+        //renderer.rotate(1.5708, vec3(1, 0, 0))
+        
+        renderer.translate(vec3(0, 70, 0));
+        renderer.scale(vec3(20));
         //renderer.scale(vec3(170, 50, 170));
-        renderer.translate(vec3(0, 50, 0));
-        renderer.scale(vec3(70));
-        _geometry.draw(renderer);
+        _geometry.draw(renderer, _skeleton);
         renderer.pop();
 
         ASkeletonDrawer drawer;
-        drawer.setJointRadius(0.05);
-        drawer.setScale(100);
+        //drawer.setJointRadius(0.05);
+        //drawer.setScale(100);
         drawer.draw(renderer, _skeleton);
+
+      
     }
 
 private:
@@ -161,6 +141,7 @@ private:
     float _factor = 1;
     Skeleton _skeleton;
     AGLTFGeometry _geometry;
+    AGLTFGeometry _origGeometry;
 
     Transform  RestBone1Transform;
     Transform  RestBone2Transform;
