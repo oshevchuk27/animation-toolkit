@@ -35,6 +35,7 @@ public:
         //_geometry.load("../models/warrok.glb");
         //_geometry.load("../models/two-shapes.gltf");
         _geometry.load("../models/cylinder.glb");
+        _origGeometry.load("../models/cylinder.glb");
         // _geometry.print(true);
 
         renderer.loadShader("skin", "../shaders/skin.vs", "../shaders/skin.fs");
@@ -56,6 +57,7 @@ public:
         renderer.setUniform("DetailTexture.enabled", false);
         renderer.setUniform("DetailTexture.offset", vec2(0.0f));
         renderer.setUniform("DetailTexture.tile", vec2(1.0f));
+
 
 
     }
@@ -86,7 +88,8 @@ public:
 
                     //std::cout << joints << std::endl;
                     //std::cout << "matrix" << _geometry.getInverseBindMatrix(0, joints[0]) << endl;
-                    vec4 pos = _geometry.getVertexData(meshid, primid, "POSITION", vid);
+                    vec4 pos = _origGeometry.getVertexData(meshid, primid, "POSITION", vid);
+                    pos[3] = 1;
 
                     //std::cout << "initial position" << pos << std::endl;
 
@@ -98,11 +101,11 @@ public:
                     //std::cout << "skin matrix" << _geometry.getInverseBindMatrix(0, joints[0]) << std::endl;
                     
 
-                    vec4 newpos = skinMatrix * vec4(pos[0], pos[1], pos[2], 1);
+                    vec4 newpos = skinMatrix * pos;
 
                     //std::cout << "new position" << newpos << std::endl;
 
-                    _geometry.setVertexData(meshid, primid, "POSITION", vid, vec4(newpos[0], newpos[1], newpos[2], 0));
+                    _geometry.setVertexData(meshid, primid, "POSITION", vid, newpos);
 
                     //std::cout << "end iteration" << std::endl;
 
@@ -150,8 +153,10 @@ private:
     float _factor = 1;
     Skeleton _skeleton;
     AGLTFGeometry _geometry;
+    AGLTFGeometry _origGeometry;
     Motion _motion;
-   
+    mat4 invMatrix0;
+    mat4 invMatrix1;
 };
 
 int main(int argc, char** argv) {

@@ -25,8 +25,17 @@ target_link_libraries(AGLTFThread ${LIBS})
 add_executable(AGLTFThread_Shader AGLTFThread_Shader.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
 target_link_libraries(AGLTFThread_Shader ${LIBS})
 
-add_executable(AGLTFHand AGLTFHand.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
-target_link_libraries(AGLTFHand ${LIBS})
+add_executable(AGLTFThreadLB AGLTFThreadLB.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
+target_link_libraries(AGLTFThreadLB ${LIBS})
+
+add_executable(AGLTFThreadDLB AGLTFThreadDLB.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
+target_link_libraries(AGLTFThreadDLB ${LIBS})
+
+add_executable(AGLTFHandLB AGLTFHandLB.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
+target_link_libraries(AGLTFHandLB ${LIBS})
+
+add_executable(AGLTFHandDLB AGLTFHandDLB.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
+target_link_libraries(AGLTFHandDLB ${LIBS})
 
 add_executable(AGLTFMia AGLTFMia.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
 target_link_libraries(AGLTFMia ${LIBS})

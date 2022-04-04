@@ -21,6 +21,7 @@ public:
         }
 
         _geometry.load("../models/thread.glb");
+        _origGeometry.load("../models/thread.glb");
 
         //_geometry.print();
         renderer.loadShader("skin", "../shaders/skin.vs", "../shaders/skin.fs");
@@ -45,11 +46,57 @@ public:
     }
 
     virtual void scene() {
-        //_motion.update(_skeleton, elapsedTime());
+        _motion.update(_skeleton, elapsedTime());
+
+
+        int nummesh = _geometry.getNumMeshes();
+
+        for (int meshid = 0; meshid < nummesh; meshid++) {
+            int numprims = _geometry.getNumPrimitives(meshid);
+
+            for (int primid = 0; primid < numprims; primid++) {
+                int numverts = _geometry.getNumVertices(meshid, primid, "POSITION");
+
+                for (int vid = 0; vid < numverts; vid++) {
+
+                    vec4 weights = _geometry.getVertexData(meshid, primid, "WEIGHTS_0", vid);
+                    vec4 joints = _geometry.getVertexData(meshid, primid, "JOINTS_0", vid);
+
+
+                    //std::cout << joints << std::endl;
+                    //std::cout << "matrix" << _geometry.getInverseBindMatrix(0, joints[0]) << endl;
+                    // Need to use original vertices for calculations!
+                    vec4 pos = _origGeometry.getVertexData(meshid, primid, "POSITION", vid);
+                    pos[3] = 1; // homogeneous coordinate
+
+                    vec4 newpos = vec4(0);
+                    for (int i = 0; i < 4; i++) {
+                        mat4 invMatrix = _geometry.getInverseBindMatrix(0, joints[i]);
+                        std::string name = _geometry.getJointName(0, (int)joints[i]);
+                        atk::Joint* joint = _skeleton.getByName(name);
+                        if (!joint) std::cout << "Error: cannot find name! " << name << std::endl;
+
+                        mat4 local2global = joint->getLocal2Global().matrix();
+                        newpos += weights[i] * local2global * invMatrix * pos;
+                    }
+
+                    //setColor(vec3(1));
+                    //drawSphere(newpos, 10);
+
+
+               // vec4 newpos = skinMatrix * pos;
+                    _geometry.setVertexData(meshid, primid, "POSITION", vid, newpos);
+
+                    //weights = _geometry.getVertexData(meshid, primid, "WEIGHTS_0", vid); 
+                    //std::cout << weights << std::endl;
+                }
+            }
+        }
+
+
+
 
         renderer.beginShader("skin");
-
-
 
 
         setColor(vec4(1));
@@ -84,6 +131,7 @@ protected:
     Skeleton _skeleton;
     Motion _motion;
     AGLTFGeometry _geometry;
+    AGLTFGeometry _origGeometry;
 };
 
 int main(int argc, char** argv)
