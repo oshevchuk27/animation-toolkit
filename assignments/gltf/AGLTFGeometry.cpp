@@ -140,6 +140,19 @@ void AGLTFGeometry::setVertexData(int meshid, int primid, const char* attrib, in
   prims[primid]->setVertexData(attrib, vertexid, v);
 }
 
+void AGLTFGeometry::update() {
+  assert(_geometry.size() > 0);
+  for (int meshid = 0; meshid < _geometry.size(); meshid++) {
+    const std::vector<GLTFPrimitive*>& prims = _geometry.at(meshid);
+    int numprims = prims.size();
+
+    for (int primid = 0; primid < numprims; primid++) {
+      prims[primid]->update("POSITION");
+      prims[primid]->update("NORMAL");
+    }
+  }
+}
+
 glm::vec4 AGLTFGeometry::getVertexData(int meshid, int primid, const char* attrib, int vertexid) const {
   assert(meshid >= 0 && meshid < _geometry.size());
   const std::vector<GLTFPrimitive*>& prims = _geometry.at(meshid);
@@ -185,7 +198,6 @@ void AGLTFGeometry::drawNode(agl::Renderer& renderer, int nodeId)
       renderer.scale(vec3(node.scale[0], node.scale[1], node.scale[2]));
     }
   }
-
   //std::cout << "node " << node.name << ", Meshes " << node.mesh << std::endl;
 
   if (node.mesh > -1) {

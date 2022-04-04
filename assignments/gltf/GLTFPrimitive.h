@@ -173,6 +173,21 @@ class GLTFPrimitive : public agl::Mesh {
     std::cout << "ERROR: Invalid size - " << accessor.type << std::endl;
     return -1;
   }
+
+  void update(const char* attribName) {
+    assert(_model);
+    assert(_primitive.attributes.count(attribName));
+
+    // asn: this is slow -- should do once
+    int aid = _primitive.attributes.at(attribName);
+    const tinygltf::Accessor &accessor = _model->accessors[aid];
+    const tinygltf::BufferView& bufferView = _model->bufferViews[accessor.bufferView];
+  
+    int va = _attribmap[attribName];
+    glBindBuffer(bufferView.target, _buffers[va]);
+    glBufferData(bufferView.target, _data[va].size() * sizeof(GLfloat),
+      _data[va].data(), GL_DYNAMIC_DRAW);
+  }
     
   void setVertexData(const char* attribName, int id, const glm::vec4& val) {
     assert(_model);
@@ -186,14 +201,6 @@ class GLTFPrimitive : public agl::Mesh {
       _data[va][idx] = val[i];
     }
     
-    // asn: this is slow -- should do once
-    int aid = _primitive.attributes.at(attribName);
-    const tinygltf::Accessor &accessor = _model->accessors[aid];
-    const tinygltf::BufferView& bufferView = _model->bufferViews[accessor.bufferView];
-  
-    glBindBuffer(bufferView.target, _buffers[va]);
-    glBufferData(bufferView.target, _data[va].size() * sizeof(GLfloat),
-      _data[va].data(), GL_DYNAMIC_DRAW);
   }
 
   glm::vec4 getVertexData(const char* attribName, int id) {

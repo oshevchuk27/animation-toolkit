@@ -27,6 +27,7 @@ class AGLTFGeometry
    int getNumVertices(int meshid, int primid, const char* attrib) const;
    glm::vec4 getVertexData(int meshid, int primid, const char* attrib, int vertexid) const;
    void setVertexData(int meshid, int primid, const char* attrib, int vertexid, const glm::vec4& val);
+   void update();
 
    int getNumSkins() const;
    void getInverseBindMatrices(int skinid, std::vector<glm::mat4>& ibm) const;

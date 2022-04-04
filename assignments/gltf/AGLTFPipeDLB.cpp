@@ -36,9 +36,9 @@ public:
         //_geometry.load("../models/Borb.glb");
         //_geometry.load("../models/warrok.glb");
         //_geometry.load("../models/two-shapes.gltf");
-        _geometry.load("../models/pipe1.glb");
-        _origGeometry.load("../models/pipe1.glb");
-        // _geometry.print(true);
+        _geometry.load("../models/pipe2.glb");
+        _origGeometry.load("../models/pipe2.glb");
+         _geometry.print(false);
 
         
 
@@ -48,7 +48,6 @@ public:
 
     virtual void scene() {
 
-        
         _factor = 2.0 * sin(elapsedTime());
         _skeleton.getByID(0)->setLocalRotation(glm::angleAxis(0.0f, vec3(0, 0, 1)));
         _skeleton.getByID(1)->setLocalRotation(glm::angleAxis(_factor, vec3(0, 0, 1)));
@@ -116,6 +115,7 @@ public:
                 }
             }
         }
+        _geometry.update();
 
         //setColor(vec3(0, 1, 0));
         renderer.push();

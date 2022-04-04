@@ -35,9 +35,9 @@ public:
         //_geometry.load("../models/Borb.glb");
         //_geometry.load("../models/warrok.glb");
         //_geometry.load("../models/two-shapes.gltf");
-        _geometry.load("../models/pipe1.glb");
-        _origGeometry.load("../models/pipe1.glb"); // need to keep original vertices
-        //_geometry.print();
+        _geometry.load("../models/pipe2.glb");
+        _origGeometry.load("../models/pipe2.glb"); // need to keep original vertices
+        _geometry.print();
 
       
     }
@@ -90,6 +90,8 @@ public:
                 }
             }
         }
+        _geometry.update();
+
 
         //setColor(vec3(0, 1, 0));
         renderer.push();
