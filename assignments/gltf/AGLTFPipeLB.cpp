@@ -19,6 +19,10 @@ public:
     virtual void setup()
     {
         //lookAt(vec3(250), vec3(0));
+		    lookAt(vec3(2), vec3(0));
+        vec3 center = vec3(0, 0, 0);
+        vec3 dim = vec3(5, 10, 5);
+        setupPerspectiveScene(center, dim);
 
         Joint* root = new Joint("Bone");
         Joint* joint1 = new Joint("Bone.001");
@@ -39,13 +43,18 @@ public:
         _origGeometry.load("../models/pipe2.glb"); // need to keep original vertices
         _geometry.print();
 
+        mat4 invMatrix = _geometry.getInverseBindMatrix(0, 0);
+        std::cout << "INV 0" << invMatrix << std::endl;
+
+        invMatrix = _geometry.getInverseBindMatrix(0, 1);
+        std::cout << "INV 1" << invMatrix << std::endl;
       
     }
 
-    virtual void scene() {
+    virtual void draw() {
 
         // try to edit vertices
-        _factor = 2 * sin(elapsedTime());
+        _factor = 2; //2 * sin(elapsedTime());
         _skeleton.getByID(0)->setLocalRotation(glm::angleAxis(0.0f, vec3(0, 0, 1)));
         _skeleton.getByID(1)->setLocalRotation(glm::angleAxis(_factor, vec3(0, 0, 1)));
         _skeleton.fk();
@@ -94,12 +103,14 @@ public:
 
 
         //setColor(vec3(0, 1, 0));
+        renderer.blendMode(agl::BLEND);
+        setColor(vec4(0, 1, 0, 0.5));
         renderer.push();
         //renderer.rotate(-3.14 / 2.0, vec3(1, 0, 0));
         //renderer.rotate(1.5708, vec3(1, 0, 0));
   
-        renderer.translate(vec3(0, 170, 0));
-        renderer.scale(vec3(20));
+        renderer.translate(vec3(2, 0, 0));
+        //renderer.scale(vec3(20));
         //renderer.scale(vec3(170, 50, 170));
         _geometry.draw(renderer, _skeleton);
         renderer.pop();
@@ -107,6 +118,9 @@ public:
         ASkeletonDrawer drawer;
         //drawer.setJointRadius(0.05);
         //drawer.setScale(100);
+        drawer.setColor(vec3(1,1,0));
+        drawer.setJointRadius(0.05);
+        drawer.setScale(1);
         drawer.draw(renderer, _skeleton);
 
         /*for (int i = 0; i < _skeleton.getNumJoints(); i++) {
@@ -117,6 +131,7 @@ public:
             vec3 p2 = joint->getParent()->getGlobalTranslation();
             drawEllipsoid(p1, p2, 5);
         }*/
+        drawFloor(200, 4, 1);
     }
 
 private:
