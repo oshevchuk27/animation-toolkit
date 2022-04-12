@@ -37,7 +37,7 @@ public:
         //_geometry.load("../models/two-shapes.gltf");
         _geometry.load("../models/pipe2.glb");
         _origGeometry.load("../models/pipe2.glb"); // need to keep original vertices
-        _geometry.print();
+        _geometry.print(false);
 
       
     }

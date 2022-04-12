@@ -38,7 +38,7 @@ public:
         //_geometry.load("../models/two-shapes.gltf");
         _geometry.load("../models/hand.glb");
         _origGeometry.load("../models/hand.glb"); // need to keep original vertices
-        //_geometry.print();
+        _geometry.print(false);
 
 
         renderer.loadShader("skin", "../shaders/skin.vs", "../shaders/skin.fs");
