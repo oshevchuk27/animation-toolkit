@@ -80,6 +80,7 @@ public:
                     for (int i = 0; i < 4; i++) {
 
                         mat4 invMatrix = _geometry.getInverseBindMatrix(0, joints[i]);
+                        //std::cout << invMatrix << std::endl;
                         mat3 rotInvMatrix = mat3(vec3(invMatrix[0][0], invMatrix[1][0], invMatrix[2][0]),
                             vec3(invMatrix[0][1], invMatrix[1][1], invMatrix[2][1]), vec3(invMatrix[0][2],
                                 invMatrix[1][2], invMatrix[2][2]));
@@ -91,7 +92,7 @@ public:
                         vec3 BoneTrans = _skeleton.getByName(name)->getLocal2Global().t();
                         dualquat Bone = dualquat(BoneRot, BoneTrans);
 
-                        newquat = newquat +  weights[i] * Bone * invDQuat;
+                        newquat = newquat + weights[i] * Bone * invDQuat;
 
                     }
 
