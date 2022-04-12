@@ -20,6 +20,10 @@ public:
     {
 
        // lookAt(vec3(300), vec3(0));
+		    lookAt(vec3(2), vec3(0));
+        vec3 center = vec3(0, 0, 0);
+        vec3 dim = vec3(5, 10, 5);
+        setupPerspectiveScene(center, dim);
 
         Joint* root = new Joint("Bone");
         Joint* joint1 = new Joint("Bone.001");
@@ -41,12 +45,16 @@ public:
          _geometry.print(false);
 
         
-
-
+        mat4 invMatrix = _geometry.getInverseBindMatrix(0, 0);
+        quat identity = glm::angleAxis<float>(0.0f, vec3(0,0,1));
+        dualquat invBone0 = dualquat(identity, vec3(0,0,0));
+        dualquat invBone1 = dualquat(identity, vec3(0,-1,0));
+        invDuals.push_back(invBone0);
+        invDuals.push_back(invBone1);
 
     }
 
-    virtual void scene() {
+    virtual void draw() {
 
         _factor = 2.0 * sin(elapsedTime());
         _skeleton.getByID(0)->setLocalRotation(glm::angleAxis(0.0f, vec3(0, 0, 1)));
@@ -74,11 +82,12 @@ public:
                     vec4 pos = _origGeometry.getVertexData(meshid, primid, "POSITION", vid);
                     pos[3] = 1;
 
+                    //std::cout << glm::to_string(newquat) << weights[0] << " " << weights[1] << std::endl;
 
-                    dualquat newquat = dualquat(glm::angleAxis(0.0f, vec3(0, 0, 1)), vec3(0));
-
+                    dualquat newquat = dualquat(glm::angleAxis(0.0f, vec3(0,0,0)), vec3(0));
                     for (int i = 0; i < 4; i++) {
 
+<<<<<<< HEAD
                         mat4 invMatrix = _geometry.getInverseBindMatrix(0, joints[i]);
                         //std::cout << invMatrix << std::endl;
                         mat3 rotInvMatrix = mat3(vec3(invMatrix[0][0], invMatrix[1][0], invMatrix[2][0]),
@@ -87,20 +96,38 @@ public:
                         quat rotInvQuat = quat(rotInvMatrix);
                         vec3 rotInvTrans = vec3(invMatrix[0][3], invMatrix[1][3], invMatrix[2][3]);
                         dualquat invDQuat = dualquat(rotInvQuat, rotInvTrans);
+=======
+                        //mat4 invMatrix = _geometry.getInverseBindMatrix(0, joints[i]);
+                        //mat3 rotInvMatrix = mat3(vec3(invMatrix[0][0], invMatrix[1][0], invMatrix[2][0]),
+                        //    vec3(invMatrix[0][1], invMatrix[1][1], invMatrix[2][1]), vec3(invMatrix[0][2],
+                        //        invMatrix[1][2], invMatrix[2][2]));
+
+
+                        //quat rotInvQuat = quat(rotInvMatrix);
+                        //vec3 rotInvTrans = vec3(invMatrix[0][3], invMatrix[1][3], invMatrix[2][3]);
+                        //dualquat invDQuat = dualquat(rotInvQuat, rotInvTrans);
+                        dualquat invDQuat = invDuals[(int) joints[i]];
+
+>>>>>>> 459f00911380a8686348abe018f7f8bfe054ab22
                         std::string name = _geometry.getJointName(0, (int)joints[i]);
+                        //std::cout << glm::to_string(invDQuat) << std::endl;
+                        //std::cout << rotInvTrans << std::endl;
+
                         quat BoneRot = _skeleton.getByName(name)->getLocal2Global().r();
                         vec3 BoneTrans = _skeleton.getByName(name)->getLocal2Global().t();
                         dualquat Bone = dualquat(BoneRot, BoneTrans);
 
+<<<<<<< HEAD
                         newquat = newquat + weights[i] * Bone * invDQuat;
+=======
+                        newquat = newquat + weights[i] * (Bone * invDQuat);
+>>>>>>> 459f00911380a8686348abe018f7f8bfe054ab22
 
                     }
 
-
-
                     dualquat newquatnorm = normalize(newquat);
 
-                    vec4 newpos = newquatnorm * pos;
+                    vec4 newpos = newquatnorm * pos * inverse(newquatnorm);
 
 
 
@@ -112,28 +139,30 @@ public:
                     //weights = _geometry.getVertexData(meshid, primid, "WEIGHTS_0", vid);
                     //std::cout << weights << std::endl;
 
-
                 }
             }
         }
         _geometry.update();
 
-        //setColor(vec3(0, 1, 0));
+        renderer.blendMode(agl::BLEND);
+        setColor(vec4(0, 1, 0, 0.5));
         renderer.push();
         //renderer.rotate(-3.14 / 2.0, vec3(1, 0, 0));
         //renderer.rotate(1.5708, vec3(1, 0, 0))
         
-        renderer.translate(vec3(0, 70, 0));
-        renderer.scale(vec3(20));
+        renderer.translate(vec3(2, 0, 0));
+        //renderer.scale(vec3(20));
         //renderer.scale(vec3(170, 50, 170));
         _geometry.draw(renderer, _skeleton);
         renderer.pop();
 
         ASkeletonDrawer drawer;
-        //drawer.setJointRadius(0.05);
-        //drawer.setScale(100);
+        drawer.setColor(vec3(1,1,0));
+        drawer.setJointRadius(0.05);
+        drawer.setScale(1);
         drawer.draw(renderer, _skeleton);
 
+        drawFloor(200, 4, 1);
       
     }
 
@@ -151,6 +180,7 @@ private:
     vec3 RestBone1Trans;
     quat RestBone2Rot;
     vec3 RestBone2Trans;
+    std::vector<dualquat> invDuals;
 
    
 };

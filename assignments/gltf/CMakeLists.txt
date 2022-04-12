@@ -31,11 +31,11 @@ target_link_libraries(AGLTFThreadLB ${LIBS})
 add_executable(AGLTFThreadDLB AGLTFThreadDLB.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
 target_link_libraries(AGLTFThreadDLB ${LIBS})
 
-add_executable(AGLTFHandLB AGLTFHandLB.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
-target_link_libraries(AGLTFHandLB ${LIBS})
+#add_executable(AGLTFHandLB AGLTFHandLB.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
+#target_link_libraries(AGLTFHandLB ${LIBS})
 
-add_executable(AGLTFHandDLB AGLTFHandDLB.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
-target_link_libraries(AGLTFHandDLB ${LIBS})
+#add_executable(AGLTFHandDLB AGLTFHandDLB.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
+#target_link_libraries(AGLTFHandDLB ${LIBS})
 
 add_executable(AGLTFMia AGLTFMia.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
 target_link_libraries(AGLTFMia ${LIBS})
