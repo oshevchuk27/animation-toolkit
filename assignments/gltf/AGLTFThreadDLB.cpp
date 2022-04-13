@@ -151,6 +151,8 @@ public:
             }
         }
 
+        _geometry.update();
+
         //setColor(vec3(0, 1, 0));
         renderer.push();
         //renderer.rotate(-3.14 / 2.0, vec3(1, 0, 0));

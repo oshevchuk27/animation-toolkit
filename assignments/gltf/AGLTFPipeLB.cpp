@@ -19,13 +19,13 @@ public:
     virtual void setup()
     {
         //lookAt(vec3(250), vec3(0));
-		    lookAt(vec3(2), vec3(0));
+		  lookAt(vec3(-250), vec3(0));
         vec3 center = vec3(0, 0, 0);
         vec3 dim = vec3(5, 10, 5);
         setupPerspectiveScene(center, dim);
 
         Joint* root = new Joint("Bone");
-        Joint* joint1 = new Joint("Bone.001");
+        Joint* joint1 = new Joint("Bone.002");
         Joint* joint2 = new Joint("Bone_End");
         root->setLocalTranslation(vec3(0, 0, 0));
         joint1->setLocalTranslation(vec3(0, 1, 0));
@@ -39,15 +39,15 @@ public:
         //_geometry.load("../models/Borb.glb");
         //_geometry.load("../models/warrok.glb");
         //_geometry.load("../models/two-shapes.gltf");
-        _geometry.load("../models/pipe2.glb");
-        _origGeometry.load("../models/pipe2.glb"); // need to keep original vertices
+        _geometry.load("../models/pipe3.glb");
+        _origGeometry.load("../models/pipe3.glb"); // need to keep original vertices
         _geometry.print(false);
 
-        mat4 invMatrix = _geometry.getInverseBindMatrix(0, 0);
+        /*mat4 invMatrix = _geometry.getInverseBindMatrix(0, 0);
         std::cout << "INV 0" << invMatrix << std::endl;
 
         invMatrix = _geometry.getInverseBindMatrix(0, 1);
-        std::cout << "INV 1" << invMatrix << std::endl;
+        std::cout << "INV 1" << invMatrix << std::endl;*/
       
     }
 

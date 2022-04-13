@@ -20,13 +20,13 @@ public:
     {
 
        // lookAt(vec3(300), vec3(0));
-		    lookAt(vec3(2), vec3(0));
+		    //lookAt(vec3(2), vec3(0));
         vec3 center = vec3(0, 0, 0);
         vec3 dim = vec3(5, 10, 5);
         setupPerspectiveScene(center, dim);
 
         Joint* root = new Joint("Bone");
-        Joint* joint1 = new Joint("Bone.001");
+        Joint* joint1 = new Joint("Bone.002");
         Joint* joint2 = new Joint("Bone_End");
         root->setLocalTranslation(vec3(0, 0, 0));
         joint1->setLocalTranslation(vec3(0, 1, 0));
@@ -40,8 +40,8 @@ public:
         //_geometry.load("../models/Borb.glb");
         //_geometry.load("../models/warrok.glb");
         //_geometry.load("../models/two-shapes.gltf");
-        _geometry.load("../models/pipe2.glb");
-        _origGeometry.load("../models/pipe2.glb");
+        _geometry.load("../models/pipe3.glb");
+        _origGeometry.load("../models/pipe3.glb");
          _geometry.print(false);
 
         
@@ -87,16 +87,7 @@ public:
                     dualquat newquat = dualquat(glm::angleAxis(0.0f, vec3(0,0,0)), vec3(0));
                     for (int i = 0; i < 4; i++) {
 
-<<<<<<< HEAD
-                        mat4 invMatrix = _geometry.getInverseBindMatrix(0, joints[i]);
-                        //std::cout << invMatrix << std::endl;
-                        mat3 rotInvMatrix = mat3(vec3(invMatrix[0][0], invMatrix[1][0], invMatrix[2][0]),
-                            vec3(invMatrix[0][1], invMatrix[1][1], invMatrix[2][1]), vec3(invMatrix[0][2],
-                                invMatrix[1][2], invMatrix[2][2]));
-                        quat rotInvQuat = quat(rotInvMatrix);
-                        vec3 rotInvTrans = vec3(invMatrix[0][3], invMatrix[1][3], invMatrix[2][3]);
-                        dualquat invDQuat = dualquat(rotInvQuat, rotInvTrans);
-=======
+                        
                         //mat4 invMatrix = _geometry.getInverseBindMatrix(0, joints[i]);
                         //mat3 rotInvMatrix = mat3(vec3(invMatrix[0][0], invMatrix[1][0], invMatrix[2][0]),
                         //    vec3(invMatrix[0][1], invMatrix[1][1], invMatrix[2][1]), vec3(invMatrix[0][2],
@@ -108,7 +99,6 @@ public:
                         //dualquat invDQuat = dualquat(rotInvQuat, rotInvTrans);
                         dualquat invDQuat = invDuals[(int) joints[i]];
 
->>>>>>> 459f00911380a8686348abe018f7f8bfe054ab22
                         std::string name = _geometry.getJointName(0, (int)joints[i]);
                         //std::cout << glm::to_string(invDQuat) << std::endl;
                         //std::cout << rotInvTrans << std::endl;
@@ -117,11 +107,7 @@ public:
                         vec3 BoneTrans = _skeleton.getByName(name)->getLocal2Global().t();
                         dualquat Bone = dualquat(BoneRot, BoneTrans);
 
-<<<<<<< HEAD
-                        newquat = newquat + weights[i] * Bone * invDQuat;
-=======
                         newquat = newquat + weights[i] * (Bone * invDQuat);
->>>>>>> 459f00911380a8686348abe018f7f8bfe054ab22
 
                     }
 
