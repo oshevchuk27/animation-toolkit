@@ -3,7 +3,9 @@
 #include "atkui/framework.h"
 #include "AGLTFGeometry.h"
 #include "ASkeletonDrawer.h"
+#include <chrono>
 
+using namespace std::chrono;
 using namespace atk;
 using namespace std;
 using namespace glm;
@@ -67,6 +69,7 @@ public:
         //_geometry.print();
 
 
+
     }
 
     virtual void scene() {
@@ -91,6 +94,9 @@ public:
 
 
         }
+
+
+        auto start = high_resolution_clock::now();
 
 
         int nummesh = _geometry.getNumMeshes();
@@ -118,11 +124,17 @@ public:
                     for (int i = 0; i < 4; i++) {
 
                         mat4 invMatrix = _geometry.getInverseBindMatrix(0, joints[i]);
-                        mat3 rotInvMatrix = mat3(vec3(invMatrix[0][0], invMatrix[0][1], invMatrix[0][2]),
-                            vec3(invMatrix[1][0], invMatrix[1][1], invMatrix[1][2]), vec3(invMatrix[2][0],
-                                invMatrix[2][1], invMatrix[2][2]));
+
+                        
+
+                        mat3 rotInvMatrix = mat3(invMatrix[0][0], invMatrix[0][1], invMatrix[0][2], 
+                            invMatrix[1][0], invMatrix[1][1], invMatrix[1][2], invMatrix[2][0],
+                            invMatrix[2][1], invMatrix[2][2]);
+
+
+                        //std::cout << "matrix for" << joints[i] << rotInvMatrix << std::endl;
                         quat rotInvQuat = quat(rotInvMatrix);
-                        vec3 rotInvTrans = vec3(invMatrix[0][3], invMatrix[1][3], invMatrix[2][3]);
+                        vec3 rotInvTrans = vec3(invMatrix[3][0], invMatrix[3][1], invMatrix[3][2]);
                         dualquat invDQuat = dualquat(rotInvQuat, rotInvTrans);
                         std::string name = _geometry.getJointName(0, (int)joints[i]);
                         quat BoneRot = _skeleton.getByName(name)->getLocal2Global().r();
@@ -137,7 +149,7 @@ public:
 
                     dualquat newquatnorm = normalize(newquat);
 
-                    vec4 newpos = newquatnorm * pos;
+                    vec4 newpos = newquatnorm * pos * inverse(newquatnorm);
 
 
 
@@ -153,14 +165,33 @@ public:
 
         _geometry.update();
 
+
+        auto stop = high_resolution_clock::now();
+
+
+        auto duration = duration_cast<microseconds>(stop - start);
+        //std::cout << "Time taken by frame "<< count << "is " << duration.count()/1000.0f<< "milliseconds." << std::endl;
+
+        if (count < 1000) {
+            std::cout << "the count is " << count << endl;
+            sum += duration.count() / 1000.0f;
+            std::cout << "the sum is " << sum << std::endl;
+            std::cout << "the average is " << sum / 1000 << std::endl;
+
+        }
+
+
+
+        count++;
+
         //setColor(vec3(0, 1, 0));
         renderer.push();
         //renderer.rotate(-3.14 / 2.0, vec3(1, 0, 0));
         //renderer.rotate(1.5708, vec3(1, 0, 0));
-        renderer.rotate(-1.5708, vec3(0, 0, 1));
+        //renderer.rotate(-1.5708, vec3(0, 0, 1));
         //renderer.translate(vec3(0, 70, 0));
-        renderer.translate(vec3(70, 0, 0));
-        renderer.translate(vec3(-50, 0, 0));
+        //renderer.translate(vec3(70, 0, 0));
+        //renderer.translate(vec3(-50, 0, 0));
         //renderer.scale(vec3(5));
         //renderer.scale(vec3(170, 50, 170));
         _geometry.draw(renderer, _skeleton);
@@ -187,6 +218,9 @@ private:
     vec3 RestBone1Trans;
     quat RestBone2Rot;
     vec3 RestBone2Trans;
+
+    int count = 0;
+    float sum = 0.0f;
 
 };
 

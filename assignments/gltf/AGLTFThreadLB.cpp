@@ -3,10 +3,13 @@
 #include "atkui/framework.h"
 #include "AGLTFGeometry.h"
 #include "ASkeletonDrawer.h"
+#include <chrono>
 
 using namespace atk;
 using namespace std;
 using namespace glm;
+
+using namespace std::chrono;
 using glm::dualquat;
 using glm::quat;
 
@@ -67,6 +70,39 @@ public:
         //_geometry.print();
 
 
+        mat4 invMatrix = _geometry.getInverseBindMatrix(0, 0);
+        std::cout << "INV 0" << invMatrix << std::endl;
+
+        invMatrix = _geometry.getInverseBindMatrix(0, 1);
+        std::cout << "INV 1" << invMatrix << std::endl;
+
+
+        invMatrix = _geometry.getInverseBindMatrix(0, 2);
+        std::cout << "INV 2" << invMatrix << std::endl;
+
+        invMatrix = _geometry.getInverseBindMatrix(0, 3);
+        std::cout << "INV 3" << invMatrix << std::endl;
+
+
+        invMatrix = _geometry.getInverseBindMatrix(0, 4);
+        std::cout << "INV 4" << invMatrix << std::endl;
+
+        invMatrix = _geometry.getInverseBindMatrix(0, 5);
+        std::cout << "INV 5" << invMatrix << std::endl;
+
+        invMatrix = _geometry.getInverseBindMatrix(0, 6);
+        std::cout << "INV 6" << invMatrix << std::endl;
+
+        invMatrix = _geometry.getInverseBindMatrix(0, 7);
+        std::cout << "INV 7" << invMatrix << std::endl;
+
+        invMatrix = _geometry.getInverseBindMatrix(0, 8);
+        std::cout << "INV 8" << invMatrix << std::endl;
+
+        invMatrix = _geometry.getInverseBindMatrix(0, 9);
+        std::cout << "INV 9" << invMatrix << std::endl;
+
+
     }
 
     virtual void scene() {
@@ -93,6 +129,9 @@ public:
         }
 
 
+       auto start = high_resolution_clock::now();
+
+
        int nummesh = _geometry.getNumMeshes();
 
         for (int meshid = 0; meshid < nummesh; meshid++) {
@@ -105,6 +144,9 @@ public:
 
                     vec4 weights = _geometry.getVertexData(meshid, primid, "WEIGHTS_0", vid);
                     vec4 joints = _geometry.getVertexData(meshid, primid, "JOINTS_0", vid);
+
+
+                    //std::cout << joints << std::endl;
 
 
                     //std::cout << joints << std::endl;
@@ -123,7 +165,7 @@ public:
                         mat4 local2global = joint->getLocal2Global().matrix();
                         newpos += weights[i] * local2global * invMatrix * pos; 
                     }
-
+                     
                     //setColor(vec3(1));
                     //drawSphere(newpos, 10);
 
@@ -137,15 +179,36 @@ public:
             }
         } 
 
+        _geometry.update();
+
+
+        auto stop = high_resolution_clock::now();
+
+
+        auto duration = duration_cast<microseconds>(stop - start);
+        //std::cout << "Time taken by frame "<< count << "is " << duration.count()/1000.0f<< "milliseconds." << std::endl;
+
+        if (count < 1000) {
+            std::cout << "the count is " << count << endl;
+            sum += duration.count() / 1000.0f;
+            std::cout << "the sum is " << sum << std::endl;
+            std::cout << "the average is " << sum / 1000 << std::endl;
+
+        }
+
+
+
+        count++;
+
         //setColor(vec3(0, 1, 0));
         renderer.push();
         //renderer.rotate(-3.14 / 2.0, vec3(1, 0, 0));
         //renderer.rotate(1.5708, vec3(1, 0, 0));
-        renderer.rotate(-1.5708, vec3(0, 0, 1));
+        //renderer.rotate(-1.5708, vec3(0, 0, 1));
         //renderer.translate(vec3(0, 70, 0));
-        renderer.translate(vec3(70, 0, 0));
-        renderer.translate(vec3(-50, 0, 0));
-        //renderer.scale(vec3(5));
+        //renderer.translate(vec3(70, 0, 0));
+        //renderer.translate(vec3(-50, 0, 0));
+         //renderer.scale(vec3(2, 1, 2));
         //renderer.scale(vec3(170, 50, 170));
         _geometry.draw(renderer, _skeleton);
         renderer.pop();
@@ -154,7 +217,7 @@ public:
        
         //drawer.setJointRadius(0.05);
         //drawer.setScale(100);
-        drawer.draw(renderer, _skeleton);
+        drawer.draw(renderer,_skeleton);
     }
 
 private:
@@ -171,6 +234,9 @@ private:
     vec3 RestBone1Trans;
     quat RestBone2Rot;
     vec3 RestBone2Trans;
+
+    int count = 0;
+    float sum = 0.0f;
 
 };
 

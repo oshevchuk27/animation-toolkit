@@ -13,14 +13,14 @@ public:
     }
 
     virtual void setup() {
-        loadMotion("../motions/thread.bvh");
+        loadMotion("../motions/thread_noroll.bvh");
         for (int i = 0; i < _skeleton.getNumJoints(); i++)
         {
             atk::Joint* joint = _skeleton.getByID(i);
             joint->setLocalTranslation(joint->getLocalTranslation());
         }
 
-        _geometry.load("../models/thread.glb");
+        _geometry.load("../models/thread_noroll.glb");
 
         //_geometry.print();
         renderer.loadShader("skin", "../shaders/skin.vs", "../shaders/skin.fs");
@@ -57,7 +57,7 @@ public:
         // renderer.translate(vec3(0.5, 0.3, 0.7));
 
         //renderer.rotate(-3.14/2.0, vec3(1,0,0));
-       // renderer.scale(vec3(10));
+       renderer.scale(vec3(10));
         _geometry.draw(renderer, _skeleton);
         renderer.pop();
 

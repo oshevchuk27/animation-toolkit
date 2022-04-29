@@ -3,10 +3,13 @@
 #include "atkui/framework.h"
 #include "AGLTFGeometry.h"
 #include "ASkeletonDrawer.h"
+#include <chrono>
 
 using namespace atk;
 using namespace std;
 using namespace glm;
+using namespace std::chrono;
+
 using glm::dualquat;
 using glm::quat;
 
@@ -19,17 +22,18 @@ public:
     virtual void setup()
     {
         //lookAt(vec3(250), vec3(0));
-		  lookAt(vec3(-250), vec3(0));
+		  //lookAt(vec3(0), vec3(0), vec3(0, -50, 0));
+        //lookAt(vec3(5), vec3(0));
         vec3 center = vec3(0, 0, 0);
-        vec3 dim = vec3(5, 10, 5);
+        vec3 dim = vec3(25, 35, 25);
         setupPerspectiveScene(center, dim);
 
         Joint* root = new Joint("Bone");
-        Joint* joint1 = new Joint("Bone.002");
+        Joint* joint1 = new Joint("Bone.001");
         Joint* joint2 = new Joint("Bone_End");
         root->setLocalTranslation(vec3(0, 0, 0));
-        joint1->setLocalTranslation(vec3(0, 1, 0));
-        joint2->setLocalTranslation(vec3(0, 1, 0));
+        joint1->setLocalTranslation(vec3(0, 7.9813, 0));
+        joint2->setLocalTranslation(vec3(0, (12.975 - 7.9813), 0));
         _skeleton.addJoint(root);
         _skeleton.addJoint(joint1, root);
         _skeleton.addJoint(joint2, joint1);
@@ -43,21 +47,25 @@ public:
         _origGeometry.load("../models/pipe3.glb"); // need to keep original vertices
         _geometry.print(false);
 
-        /*mat4 invMatrix = _geometry.getInverseBindMatrix(0, 0);
+        mat4 invMatrix = _geometry.getInverseBindMatrix(0, 0);
         std::cout << "INV 0" << invMatrix << std::endl;
 
         invMatrix = _geometry.getInverseBindMatrix(0, 1);
-        std::cout << "INV 1" << invMatrix << std::endl;*/
+        std::cout << "INV 1" << invMatrix << std::endl;
       
     }
 
     virtual void draw() {
 
         // try to edit vertices
-        _factor = 2; //2 * sin(elapsedTime());
-        _skeleton.getByID(0)->setLocalRotation(glm::angleAxis(0.0f, vec3(0, 0, 1)));
-        _skeleton.getByID(1)->setLocalRotation(glm::angleAxis(_factor, vec3(0, 0, 1)));
+        _factor = 3 * sin(elapsedTime());
+        _skeleton.getByID(0)->setLocalRotation(glm::angleAxis(0.0f, vec3(0, 1, 0)));
+        _skeleton.getByID(1)->setLocalRotation(glm::angleAxis(_factor, vec3(0, 1, 0)));
         _skeleton.fk();
+
+
+
+        auto start = high_resolution_clock::now();
 
 
         int nummesh = _geometry.getNumMeshes();
@@ -99,7 +107,26 @@ public:
                 }
             }
         }
+
         _geometry.update();
+
+        auto stop = high_resolution_clock::now();
+
+
+        auto duration = duration_cast<microseconds>(stop - start);
+        //std::cout << "Time taken by frame "<< count << "is " << duration.count()/1000.0f<< "milliseconds." << std::endl;
+
+        if (count < 1000) {
+            std::cout << "the count is " << count << endl;
+            sum += duration.count() / 1000.0f;
+            std::cout << "the sum is " << sum << std::endl;
+            std::cout << "the average is " << sum / 1000 << std::endl;
+
+        }
+
+
+
+        count++;
 
 
         //setColor(vec3(0, 1, 0));
@@ -148,6 +175,8 @@ private:
     vec3 RestBone1Trans;
     quat RestBone2Rot;
     vec3 RestBone2Trans;
+    int count = 0;
+    float sum = 0.0f;
 
 };
 

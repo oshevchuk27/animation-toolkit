@@ -1,9 +1,11 @@
 #include "atkui/framework.h"
 #include "atk/toolkit.h"
+#include <chrono>
 
 #include "agl/window.h"
 #include "agl/mesh/plane.h"
 #include "atkui/framework.h"
+using namespace std::chrono;
 
 
 
@@ -23,8 +25,13 @@ public:
 
     }
 
+    int count = 0;
+
 
     void update(float elapsedTime, Skeleton skeleton) {
+
+        auto start = high_resolution_clock::now();
+
 
 
 
@@ -84,6 +91,26 @@ public:
             setVertexData(POSITION, i, vec4(newp, 0));
 
         }
+
+
+        auto stop = high_resolution_clock::now();
+
+        auto duration = duration_cast<microseconds>(stop - start);
+        //std::cout << "Time taken by frame "<< count << "is " << duration.count()/1000.0f<< "milliseconds." << std::endl;
+
+        if (count < 1000) {
+            sum += duration.count() / 1000.0f;
+            std::cout << "the sum is " << sum << std::endl;
+            std::cout << "the average is " << sum / 1000 << std::endl;
+
+        }
+
+
+
+        count++;
+
+
+
 
 
 
@@ -191,8 +218,12 @@ public:
         RestBone1Rot = RestBone1Transform.r();
         RestBone1Trans = RestBone1Transform.t();
 
+        std::cout << RestBone1Transform << std::endl;
+
 
         RestBone2Transform = skeleton.getByName("joint1")->getLocal2Global();
+
+        std::cout << RestBone2Transform << std::endl;
 
         RestBone2Rot = RestBone2Transform.r();
         RestBone2Trans = RestBone2Transform.t();
@@ -214,6 +245,7 @@ private:
     vec3 RestBone1Trans;
     quat RestBone2Rot;
     vec3 RestBone2Trans;
+    float sum = 0.0f;
    
 
 
@@ -263,8 +295,8 @@ public:
             }
             Joint* parent = skeleton.getByID(i)->getParent();
             if (i == skeleton.getNumJoints() - 1) {
-                //parent->setLocalRotation(glm::angleAxis<float>(sin(1.5f * elapsedTime() + i), vec3(0, 0, 1)));
-               parent->setLocalRotation(glm::angleAxis<float>(0.0f, vec3(0, 0, 1)));
+                parent->setLocalRotation(glm::angleAxis<float>(sin(1.5f * elapsedTime() + i), vec3(0, 0, 1)));
+               //parent->setLocalRotation(glm::angleAxis<float>(0.0f, vec3(0, 0, 1)));
 
                //parent->setLocalTranslation(vec3(1, 2, 0));
             }

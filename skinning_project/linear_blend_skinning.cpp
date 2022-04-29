@@ -1,11 +1,13 @@
 #include "atkui/framework.h"
 #include "atk/toolkit.h"
+#include <chrono>
 
 #include "agl/window.h"
 #include "agl/mesh/plane.h"
 #include "atkui/framework.h"
 
 using namespace atk;
+using namespace std::chrono;
 using glm::vec3;
 using glm::vec2;
 using glm::vec4;
@@ -17,10 +19,14 @@ public:
         setIsDynamic(true);
         
     }
+    int count = 0;
+    std::vector<float> times;
 
 
     void update(float elapsedTime, Skeleton skeleton) {
-        
+
+
+        auto start = high_resolution_clock::now();
    
         
         for (int i = 0; i < numVertices(); i++) {
@@ -29,6 +35,7 @@ public:
 
             Transform transJoint1 = skeleton.getByName("root")->getLocal2Global() *
                 restBone1.inverse();
+
 
             Transform transJoint2 = skeleton.getByName("joint1")->getLocal2Global() *
                 restBone2.inverse();
@@ -42,6 +49,22 @@ public:
 
         }
 
+
+        auto stop = high_resolution_clock::now();
+
+        auto duration = duration_cast<microseconds>(stop - start);
+        //std::cout << "Time taken by frame "<< count << "is " << duration.count()/1000.0f<< "milliseconds." << std::endl;
+
+        if (count < 1000) {
+            sum += duration.count()/1000.0f;
+            std::cout << "the sum is " << sum << std::endl;
+            std::cout << "the average is " << sum / 1000 << std::endl;
+
+        }
+
+
+        
+        count++;
         
 
     }
@@ -145,21 +168,28 @@ public:
 
 
         restBone1 = skeleton.getByName("root")->getLocal2Global();
+
         restBone2 = skeleton.getByName("joint1")->getLocal2Global();
+
+        std::cout << restBone2 << std::endl;
 
         init();
 
+       
+
+        
         
 
     }
 
-    private:
+    public:
         std::vector<GLuint> indices;
         std::vector<GLfloat> points;
         std::vector<GLfloat> normals;
         std::vector<GLfloat> weights;
         Transform restBone1;
         Transform restBone2;
+        float sum = 0.0f;
 };
 
 
@@ -235,9 +265,10 @@ public:
 
    
 
-protected:
+public:
 	Skeleton skeleton;
     SkinTestMesh _mesh = SkinTestMesh();
+
 
 
 };
@@ -246,4 +277,6 @@ int main(int argc, char** argv)
 {
 	LinearBlendSkinning viewer;
 	viewer.run();
+
+   
 }
