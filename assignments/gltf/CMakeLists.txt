@@ -31,7 +31,7 @@ target_link_libraries(AGLTFThreadLB ${LIBS})
 add_executable(AGLTFThreadDLB AGLTFThreadDLB.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
 target_link_libraries(AGLTFThreadDLB ${LIBS})
 
-add_executable(AGLTFHandLB AGLTFHandLB.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
+add_executable(AGLTFHandLB AGLTFHandLB-Fixed.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
 target_link_libraries(AGLTFHandLB ${LIBS})
 
 add_executable(AGLTFMiaLB AGLTFMiaLB.cpp ASkeletonDrawer.cpp AGLTFGeometry.cpp)
