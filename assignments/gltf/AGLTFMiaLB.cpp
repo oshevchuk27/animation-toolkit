@@ -15,7 +15,7 @@ public:
 
     virtual void setup() {
         //loadMotion("../motions/Mia/gesture.bvh");
-        loadMotion("../motions/Mia/hand_rotate.bvh");
+        loadMotion("../motions/Mia/leg_up.bvh");
         for (int i = 0; i < _skeleton.getNumJoints(); i++)
         {
             atk::Joint* joint = _skeleton.getByID(i);
@@ -57,8 +57,12 @@ public:
 
         int nummesh = _geometry.getNumMeshes();
 
+        std::cout << nummesh << std::endl;
+
         for (int meshid = 0; meshid < nummesh; meshid++) {
             int numprims = _geometry.getNumPrimitives(meshid);
+
+           
 
             for (int primid = 0; primid < numprims; primid++) {
                 int numverts = _geometry.getNumVertices(meshid, primid, "POSITION");
@@ -98,6 +102,8 @@ public:
             }
         }
 
+        //_geometry.update();
+
 
         auto stop = high_resolution_clock::now();
 
@@ -105,13 +111,13 @@ public:
         auto duration = duration_cast<microseconds>(stop - start);
         //std::cout << "Time taken by frame "<< count << "is " << duration.count()/1000.0f<< "milliseconds." << std::endl;
 
-        if (count < 1000) {
+        /*if (count < 1000) {
             std::cout << "the count is " << count << endl;
             sum += duration.count() / 1000.0f;
             std::cout << "the sum is " << sum << std::endl;
             std::cout << "the average is " << sum / 1000 << std::endl;
 
-        }
+        }*/
 
 
 

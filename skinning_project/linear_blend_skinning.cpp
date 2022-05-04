@@ -236,7 +236,8 @@ public:
             }
             Joint* parent = skeleton.getByID(i)->getParent();
             if (i == skeleton.getNumJoints() - 1) {
-                parent->setLocalRotation(glm::angleAxis<float>(sin(1.5f * elapsedTime() + i), vec3(0, 0, 1)));
+                //parent->setLocalRotation(glm::angleAxis<float>(sin(1.5f * elapsedTime() + i), vec3(0, 0, 1)));
+                parent->setLocalRotation(glm::angleAxis<float>(-3.14f/3, vec3(0, 0, 1)));
                 //parent->setLocalRotation(glm::angleAxis<float>(0.1, vec3(0, 0, 1)));
                 //parent->setLocalTranslation(vec3(1, 2, 0));
             }

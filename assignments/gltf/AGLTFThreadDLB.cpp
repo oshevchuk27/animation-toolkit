@@ -21,7 +21,22 @@ public:
     virtual void setup()
     {
 
-        Joint* root = new Joint("Bone");
+        loadMotion("../motions/thread_bending_low.bvh");
+
+
+        for (int i = 0; i < _skeleton.getNumJoints(); i++) {
+            if (_skeleton.getByID(i) == _skeleton.getByName("Bone")) {
+                _skeleton.getByID(i)->setLocalTranslation(vec3(0, 0, 0));
+            }
+            else {
+                _skeleton.getByID(i)->setLocalTranslation(vec3(0, 50, 0));
+            }
+        }
+
+        _geometry.load("../models/thread_noroll.glb");
+        _origGeometry.load("../models/thread_noroll.glb");
+
+        /*Joint* root = new Joint("Bone");
         Joint* joint1 = new Joint("Bone.001");
         Joint* joint2 = new Joint("Bone.002");
         Joint* joint3 = new Joint("Bone.003");
@@ -56,7 +71,7 @@ public:
         _skeleton.addJoint(joint8, joint7);
         _skeleton.addJoint(joint9, joint8);
 
-        _skeleton.fk();
+        _skeleton.fk(); */
 
 
         //_geometry.load("../models/triangle.gltf");
@@ -64,8 +79,8 @@ public:
         //_geometry.load("../models/Borb.glb");
         //_geometry.load("../models/warrok.glb");
         //_geometry.load("../models/two-shapes.gltf");
-        _geometry.load("../models/thread.glb");
-        _origGeometry.load("../models/thread.glb"); // need to keep original vertices
+       // _geometry.load("../models/thread.glb");
+        //_origGeometry.load("../models/thread.glb"); // need to keep original vertices
         //_geometry.print();
 
 
@@ -75,12 +90,12 @@ public:
     virtual void scene() {
 
         // try to edit vertices
-
-        _skeleton.fk(); // computes local2global transforms
+        _motion.update(_skeleton, elapsedTime());
+       // _skeleton.fk(); // computes local2global transforms
         setColor(vec3(0, 1, 0));
 
         // todo: loop over all joints and draw
-        for (unsigned int i = 0; i < _skeleton.getNumJoints(); i++) {
+        /*for (unsigned int i = 0; i < _skeleton.getNumJoints(); i++) {
 
             if (_skeleton.getByID(i) == _skeleton.getRoot()) {
                 continue;
@@ -93,7 +108,7 @@ public:
             drawEllipsoid(globalParentPos, globalPos, 3);
 
 
-        }
+        }*/
 
 
         auto start = high_resolution_clock::now();
@@ -172,14 +187,14 @@ public:
         auto duration = duration_cast<microseconds>(stop - start);
         //std::cout << "Time taken by frame "<< count << "is " << duration.count()/1000.0f<< "milliseconds." << std::endl;
 
-        if (count < 1000) {
+       /* if (count < 1000) {
             std::cout << "the count is " << count << endl;
             sum += duration.count() / 1000.0f;
             std::cout << "the sum is " << sum << std::endl;
             std::cout << "the average is " << sum / 1000 << std::endl;
 
         }
-
+        */
 
 
         count++;
@@ -204,12 +219,23 @@ public:
         drawer.draw(renderer, _skeleton);
     }
 
+
+
+    virtual void loadDir(const std::string& dir) {
+    }
+
+    virtual void loadMotion(const std::string& filename) {
+        atk::BVHReader reader;
+        reader.load(filename, _skeleton, _motion);
+    }
+
 private:
 
     float _factor = 1;
     Skeleton _skeleton;
     AGLTFGeometry _geometry;
     AGLTFGeometry _origGeometry;
+    Motion _motion;
 
     Transform  RestBone1Transform;
     Transform  RestBone2Transform;

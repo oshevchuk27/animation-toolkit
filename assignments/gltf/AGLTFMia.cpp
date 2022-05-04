@@ -13,7 +13,7 @@ public:
 
    virtual void setup() {
       //loadMotion("../motions/Mia/gesture.bvh");
-      loadMotion("../motions/Mia/leg_up.bvh");
+      loadMotion("../motions/Mia/waving.bvh");
       for (int i = 0; i < _skeleton.getNumJoints(); i++)
       {
          atk::Joint* joint = _skeleton.getByID(i);

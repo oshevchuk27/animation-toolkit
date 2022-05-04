@@ -13,11 +13,21 @@ public:
     }
 
     virtual void setup() {
-        loadMotion("../motions/thread_noroll.bvh");
-        for (int i = 0; i < _skeleton.getNumJoints(); i++)
+        loadMotion("../motions/thread_bending_low.bvh");
+       /* for (int i = 0; i < _skeleton.getNumJoints(); i++)
         {
             atk::Joint* joint = _skeleton.getByID(i);
             joint->setLocalTranslation(joint->getLocalTranslation());
+        }
+        */
+
+        for (int i = 0; i < _skeleton.getNumJoints(); i++) {
+            if (_skeleton.getByID(i) == _skeleton.getByName("Bone")) {
+                _skeleton.getByID(i)->setLocalTranslation(vec3(0, 0, 0));
+            }
+            else {
+                _skeleton.getByID(i)->setLocalTranslation(vec3(0, 50, 0));
+            }
         }
 
         _geometry.load("../models/thread_noroll.glb");
@@ -42,10 +52,12 @@ public:
         renderer.setUniform("DetailTexture.enabled", false);
         renderer.setUniform("DetailTexture.offset", vec2(0.0f));
         renderer.setUniform("DetailTexture.tile", vec2(1.0f));
+
+
     }
 
     virtual void scene() {
-        //_motion.update(_skeleton, elapsedTime());
+        _motion.update(_skeleton, elapsedTime());
 
         renderer.beginShader("skin");
 
@@ -57,7 +69,7 @@ public:
         // renderer.translate(vec3(0.5, 0.3, 0.7));
 
         //renderer.rotate(-3.14/2.0, vec3(1,0,0));
-       renderer.scale(vec3(10));
+       //renderer.scale(vec3(10));
         _geometry.draw(renderer, _skeleton);
         renderer.pop();
 

@@ -147,7 +147,7 @@ public:
         //drawer.setScale(100);
         drawer.setColor(vec3(1,1,0));
         drawer.setJointRadius(0.05);
-        drawer.setScale(1);
+        //drawer.setScale(1);
         drawer.draw(renderer, _skeleton);
 
         /*for (int i = 0; i < _skeleton.getNumJoints(); i++) {

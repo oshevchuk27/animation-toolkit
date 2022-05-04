@@ -83,10 +83,9 @@ public:
 
 
 
-                        mat3 rotInvMatrix = mat3(invMatrix[0][0], invMatrix[1][0], invMatrix[2][0],
-                            invMatrix[0][1], invMatrix[1][1], invMatrix[2][1], invMatrix[0][2],
-                            invMatrix[1][2], invMatrix[2][2]);
-
+                        mat3 rotInvMatrix = mat3(invMatrix[0][0], invMatrix[0][1], invMatrix[0][2],
+                            invMatrix[1][0], invMatrix[1][1], invMatrix[1][2], invMatrix[2][0],
+                            invMatrix[2][1], invMatrix[2][2]);
 
                         //std::cout << "matrix for" << joints[i] << rotInvMatrix << std::endl;
                         quat rotInvQuat = quat(rotInvMatrix);
@@ -105,7 +104,7 @@ public:
 
                     dualquat newquatnorm = normalize(newquat);
 
-                    vec4 newpos = newquatnorm * pos * inverse(newquatnorm);
+                    vec4 newpos = newquatnorm * pos;
 
 
 
@@ -123,6 +122,8 @@ public:
 
             }
         }
+
+        _geometry.update();
 
 
         auto stop = high_resolution_clock::now();

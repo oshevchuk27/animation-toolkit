@@ -91,9 +91,9 @@ public:
                     for (int i = 0; i < 4; i++) {
 
                         mat4 invMatrix = _geometry.getInverseBindMatrix(0, joints[i]);
-                        mat3 rotInvMatrix = mat3(vec3(invMatrix[0][0], invMatrix[1][0], invMatrix[2][0]),
-                            vec3(invMatrix[0][1], invMatrix[1][1], invMatrix[2][1]), vec3(invMatrix[0][2],
-                                invMatrix[1][2], invMatrix[2][2]));
+                        mat3 rotInvMatrix = mat3(invMatrix[0][0], invMatrix[0][1], invMatrix[0][2],
+                            invMatrix[1][0], invMatrix[1][1], invMatrix[1][2], invMatrix[2][0],
+                            invMatrix[2][1], invMatrix[2][2]);
                         quat rotInvQuat = quat(rotInvMatrix);
                         vec3 rotInvTrans = vec3(invMatrix[3][0], invMatrix[3][1], invMatrix[3][2]);
                         dualquat invDQuat = dualquat(rotInvQuat, rotInvTrans);
