@@ -58,7 +58,7 @@ public:
 
         _factor = 3.0 * sin(elapsedTime());
         _skeleton.getByID(0)->setLocalRotation(glm::angleAxis(0.0f, vec3(0, 1, 0)));
-        _skeleton.getByID(1)->setLocalRotation(glm::angleAxis(_factor, vec3(0, 1, 0)));
+        _skeleton.getByID(1)->setLocalRotation(glm::angleAxis(3.14f / 1.2f, vec3(1, 0, 0)));
         _skeleton.fk();
 
 
@@ -155,7 +155,7 @@ public:
         //renderer.rotate(-3.14 / 2.0, vec3(1, 0, 0));
         //renderer.rotate(1.5708, vec3(1, 0, 0))
 
-        renderer.translate(vec3(2, 0, 0));
+       // renderer.translate(vec3(2, 0, 0));
         //renderer.scale(vec3(20));
         //renderer.scale(vec3(170, 50, 170));
         _geometry.draw(renderer, _skeleton);

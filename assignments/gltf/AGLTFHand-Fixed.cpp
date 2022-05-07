@@ -56,8 +56,8 @@ class AGLTFSimple : public atkui::Framework
       float factor = sin(elapsedTime());
       float theta = elapsedTime();
      _skeleton.getByName("Bone.002")->setLocalRotation(glm::angleAxis(factor, vec3(0, 0, 1)));
-      _skeleton.getRoot()->setLocalTranslation(10.0f * vec3(cos(theta), 0, sin(theta)));
-      _skeleton.getRoot()->setLocalRotation(glm::angleAxis(factor, vec3(0, 0, 1)));
+      //_skeleton.getRoot()->setLocalTranslation(10.0f * vec3(cos(theta), 0, sin(theta)));
+     // _skeleton.getRoot()->setLocalRotation(glm::angleAxis(factor, vec3(0, 0, 1)));
       _skeleton.fk();
 
       int nummesh = _geometry.getNumMeshes();

@@ -27,6 +27,7 @@ public:
         vec3 center = vec3(0, 0, 0);
         vec3 dim = vec3(25, 35, 25);
         setupPerspectiveScene(center, dim);
+        //lookAt(vec3(250), vec3(0));
 
         Joint* root = new Joint("Bone");
         Joint* joint1 = new Joint("Bone.001");
@@ -60,7 +61,7 @@ public:
         // try to edit vertices
         _factor = 3 * sin(elapsedTime());
         _skeleton.getByID(0)->setLocalRotation(glm::angleAxis(0.0f, vec3(0, 1, 0)));
-        _skeleton.getByID(1)->setLocalRotation(glm::angleAxis(_factor, vec3(0, 1, 0)));
+        _skeleton.getByID(1)->setLocalRotation(glm::angleAxis(_factor, vec3(1, 0, 0)));
         _skeleton.fk();
 
 
@@ -136,7 +137,7 @@ public:
         //renderer.rotate(-3.14 / 2.0, vec3(1, 0, 0));
         //renderer.rotate(1.5708, vec3(1, 0, 0));
   
-        renderer.translate(vec3(2, 0, 0));
+        //renderer.translate(vec3(2, 0, 0));
         //renderer.scale(vec3(20));
         //renderer.scale(vec3(170, 50, 170));
         _geometry.draw(renderer, _skeleton);

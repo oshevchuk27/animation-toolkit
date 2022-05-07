@@ -21,22 +21,50 @@ public:
     virtual void setup()
     {
 
-        loadMotion("../motions/thread_bending_low.bvh");
 
+        atk::BVHReader reader;
+        reader.load("../motions/thread_restpose.bvh", _skeleton, _motion);
 
-        for (int i = 0; i < _skeleton.getNumJoints(); i++) {
+        /*for (int i = 0; i < _skeleton.getNumJoints(); i++) {
             if (_skeleton.getByID(i) == _skeleton.getByName("Bone")) {
                 _skeleton.getByID(i)->setLocalTranslation(vec3(0, 0, 0));
             }
             else {
                 _skeleton.getByID(i)->setLocalTranslation(vec3(0, 50, 0));
             }
-        }
+        }*/
 
         _geometry.load("../models/thread_noroll.glb");
         _origGeometry.load("../models/thread_noroll.glb");
 
-        /*Joint* root = new Joint("Bone");
+
+        _geometry.print(false);
+
+        for (int i = 0; i < _geometry.getNumSkinJoints(0); i++) {
+            std::string name = _geometry.getJointName(0, i);
+            Joint* joint = _skeleton.getByName(name);
+            if (!joint) continue;
+
+            mat4 M = inverse(_geometry.getInverseBindMatrix(0, i));
+            if (i > 0) {
+                mat4 PM = joint->getParent()->getLocal2Global().matrix();
+                M = inverse(PM) * M;
+            }
+            vec3 t = vec3(M[3]);
+            quat r = quat(M);
+
+            joint->setLocalTranslation(t);
+            joint->setLocalRotation(r);
+            _skeleton.fk();
+        }
+
+
+
+
+
+
+
+       /* Joint* root = new Joint("Bone");
         Joint* joint1 = new Joint("Bone.001");
         Joint* joint2 = new Joint("Bone.002");
         Joint* joint3 = new Joint("Bone.003");
@@ -71,7 +99,7 @@ public:
         _skeleton.addJoint(joint8, joint7);
         _skeleton.addJoint(joint9, joint8);
 
-        _skeleton.fk(); */
+        _skeleton.fk();*/
 
 
         //_geometry.load("../models/triangle.gltf");
@@ -91,25 +119,34 @@ public:
 
         // try to edit vertices
         _motion.update(_skeleton, elapsedTime());
-       // _skeleton.fk(); // computes local2global transforms
+
+        //float factor = sin(elapsedTime());
+        //_skeleton.getByName("Bone.002")->setLocalRotation(glm::angleAxis(factor, vec3(0, 0, 1)));
+
+
+      
         setColor(vec3(0, 1, 0));
 
         // todo: loop over all joints and draw
-        /*for (unsigned int i = 0; i < _skeleton.getNumJoints(); i++) {
+        for (unsigned int i = 0; i < _skeleton.getNumJoints(); i++) {
 
             if (_skeleton.getByID(i) == _skeleton.getRoot()) {
                 continue;
             }
             Joint* parent = _skeleton.getByID(i)->getParent();
-            parent->setLocalRotation(glm::angleAxis<float>(sin(1.5f * elapsedTime() + i), vec3(0, 0, 1)));
+           // parent->setLocalRotation(glm::angleAxis<float>(sin(1.5f * elapsedTime() + i), vec3(0, 0, 1)));
             Joint* child = _skeleton.getByID(i);
             vec3 globalParentPos = parent->getGlobalTranslation();
             vec3 globalPos = child->getGlobalTranslation();
-            drawEllipsoid(globalParentPos, globalPos, 3);
+            //drawEllipsoid(globalParentPos, globalPos, 3);
 
 
-        }*/
+        }
 
+        _skeleton.getByName("Bone.002")->setLocalRotation(glm::angleAxis(3.14f / 2, vec3(0, 0, 1)));
+
+        _skeleton.fk(); // computes local2global transforms
+        
 
         auto start = high_resolution_clock::now();
 
@@ -134,7 +171,30 @@ public:
                     vec4 pos = _origGeometry.getVertexData(meshid, primid, "POSITION", vid);
                     pos[3] = 1; // homogeneous coordinate
 
-                    dualquat newquat = dualquat(glm::angleAxis(0.0f, vec3(0, 0, 1)), vec3(0));
+
+
+                    quat real(0, 0, 0, 0);
+                    quat dual(0, 0, 0, 0);
+                    for (int i = 0; i < 4; i++) {
+                        std::string name = _geometry.getJointName(0, (int)joints[i]);
+                        Joint* joint = _skeleton.getByName(name);
+                        if (!joint) std::cout << "Error: cannot find name! " << name << std::endl;
+
+                        mat4 invMatrix = _geometry.getInverseBindMatrix(0, joints[i]);
+                        Transform local2global = joint->getLocal2Global();
+
+                        dualquat im = dualquat(quat(invMatrix), vec3(invMatrix[3]));
+                        dualquat lg = dualquat(local2global.r(), local2global.t());
+                        dualquat dq = lg * im;
+
+                        real = real + weights[i] * dq.real; // HERE!
+                        dual = dual + weights[i] * dq.dual; // HERE!
+                    }
+
+                    dualquat newquatnorm = normalize(dualquat(real, dual));
+                    vec4 newpos = newquatnorm * pos; // HERE!!!!
+
+                   /*dualquat newquat = dualquat(glm::angleAxis(0.0f, vec3(0, 0, 1)), vec3(0));
 
                     for (int i = 0; i < 4; i++) {
 
@@ -166,7 +226,7 @@ public:
 
                     vec4 newpos = newquatnorm * pos * inverse(newquatnorm);
 
-
+                    */
 
                     // vec4 newpos = skinMatrix * pos;
 
@@ -205,18 +265,18 @@ public:
         //renderer.rotate(1.5708, vec3(1, 0, 0));
         //renderer.rotate(-1.5708, vec3(0, 0, 1));
         //renderer.translate(vec3(0, 70, 0));
-        //renderer.translate(vec3(70, 0, 0));
+        renderer.translate(vec3(180, 0, 0));
         //renderer.translate(vec3(-50, 0, 0));
-        //renderer.scale(vec3(5));
+        renderer.scale(vec3(10));
         //renderer.scale(vec3(170, 50, 170));
-        _geometry.draw(renderer, _skeleton);
+        _geometry.draw(renderer);
         renderer.pop();
 
         ASkeletonDrawer drawer;
 
-        //drawer.setJointRadius(0.05);
-        //drawer.setScale(100);
-        drawer.draw(renderer, _skeleton);
+        drawer.setJointRadius(0.5);
+        drawer.setScale(10);
+        //drawer.draw(renderer, _skeleton);
     }
 
 
@@ -244,6 +304,7 @@ private:
     vec3 RestBone1Trans;
     quat RestBone2Rot;
     vec3 RestBone2Trans;
+
 
     int count = 0;
     float sum = 0.0f;

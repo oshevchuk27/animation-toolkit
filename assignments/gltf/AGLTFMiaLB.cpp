@@ -15,7 +15,7 @@ public:
 
     virtual void setup() {
         //loadMotion("../motions/Mia/gesture.bvh");
-        loadMotion("../motions/Mia/leg_up.bvh");
+        loadMotion("../motions/Mia/mia_restpose.bvh");
         for (int i = 0; i < _skeleton.getNumJoints(); i++)
         {
             atk::Joint* joint = _skeleton.getByID(i);
@@ -25,6 +25,25 @@ public:
         _geometry.load("../models/Mia/Mia-v2.0.glb");
         _origGeometry.load("../models/Mia/Mia-v2.0.glb");
         //_geometry.print();
+
+
+        for (int i = 0; i < _geometry.getNumSkinJoints(0); i++) {
+            std::string name = _geometry.getJointName(0, i);
+            Joint* joint = _skeleton.getByName(name);
+            if (!joint) continue;
+
+            mat4 M = inverse(_geometry.getInverseBindMatrix(0, i));
+            if (i > 0) {
+                mat4 PM = joint->getParent()->getLocal2Global().matrix();
+                M = inverse(PM) * M;
+            }
+            vec3 t = vec3(M[3]);
+            quat r = quat(M);
+
+            joint->setLocalTranslation(t);
+            joint->setLocalRotation(r);
+            _skeleton.fk();
+        }       
 
         renderer.loadShader("skin", "../shaders/skin.vs", "../shaders/skin.fs");
         renderer.beginShader("skin");
@@ -51,13 +70,19 @@ public:
         _motion.update(_skeleton, elapsedTime());
 
 
+
+        _skeleton.getByName("LeftArm")->setLocalRotation(glm::angleAxis(3.14f / 2, vec3(0, 0, 1)));
+
+        _skeleton.fk(); // computes local2global transforms
+
+
         auto start = high_resolution_clock::now();
 
 
 
         int nummesh = _geometry.getNumMeshes();
 
-        std::cout << nummesh << std::endl;
+        //std::cout << nummesh << std::endl;
 
         for (int meshid = 0; meshid < nummesh; meshid++) {
             int numprims = _geometry.getNumPrimitives(meshid);
@@ -102,7 +127,7 @@ public:
             }
         }
 
-        //_geometry.update();
+        _geometry.update();
 
 
         auto stop = high_resolution_clock::now();
@@ -126,7 +151,7 @@ public:
         renderer.beginShader("skin");
         setColor(vec4(1));
         renderer.push();
-        renderer.rotate(-3.14 / 2.0, vec3(1, 0, 0));
+        renderer.rotate(-3.14 , vec3(1, 0, 0));
         renderer.scale(vec3(100));
         _geometry.draw(renderer, _skeleton);
         renderer.pop();
