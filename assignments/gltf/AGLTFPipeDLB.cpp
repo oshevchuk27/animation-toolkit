@@ -107,14 +107,10 @@ public:
                     }
 
 
-
                     dualquat newquatnorm = normalize(newquat);
 
                     vec4 newpos = newquatnorm * pos * inverse(newquatnorm);
 
-
-
-                    // vec4 newpos = skinMatrix * pos;
 
                     _geometry.setVertexData(meshid, primid, "POSITION", vid, newpos);
 

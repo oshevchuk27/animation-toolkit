@@ -87,8 +87,8 @@ void Transform::setS(const glm::vec3& s) {
 }
 
 std::ostream& operator << (std::ostream& s, const Transform& t) {
-    s << "T: " << glm::to_string(t._translation) << "\n"
-      << "R: " << glm::to_string(t._rotation) << "\n"
+    s << "T: " << glm::to_string(t._translation) << " "
+      << "R: " << glm::to_string(t._rotation) << " "
       << "S: " << glm::to_string(t._scale);
     return s;
 }
