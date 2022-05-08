@@ -4,7 +4,10 @@
 #include "AGLTFGeometry.h"
 #include "ASkeletonDrawer.h"
 #include "atkmath/constants.h"
+#include <chrono>
 
+
+using namespace std::chrono;
 using namespace atk;
 using namespace std;
 using namespace glm;
@@ -68,12 +71,13 @@ public:
         // try to edit vertices
         float factor = sin(elapsedTime());
         float theta = elapsedTime();
-       // _skeleton.getByName("Bone.010")->setLocalRotation(glm::angleAxis(1.34f, vec3(1, 0, 0)));
-       // _skeleton.getByName("Bone.011")->setLocalRotation(glm::angleAxis(1.34f, vec3(1, 0, 0)));
-        //_skeleton.getByName("Bone.003")->setLocalRotation(glm::angleAxis(1.34f, vec3(0, 0, 1)));
+        _skeleton.getByName("Bone.010")->setLocalRotation(glm::angleAxis(factor, vec3(1, 0, 0)));
+        //_skeleton.getByName("Bone.011")->setLocalRotation(glm::angleAxis(1.34f, vec3(1, 0, 0)));
+        _skeleton.getByName("Bone.003")->setLocalRotation(glm::angleAxis(1.34f, vec3(0, 0, 1)));
         //_skeleton.getByName("Bone.006")->setLocalRotation(glm::angleAxis(factor, vec3(0, 1, 0)));
-        _skeleton.getByName("Bone.018")->setLocalRotation(glm::angleAxis(1.34f, vec3(1, 0, 0)));
-        _skeleton.getByName("Bone.019")->setLocalRotation(glm::angleAxis(1.34f, vec3(1, 0, 0)));
+        //_skeleton.getByName("Bone.018")->setLocalRotation(glm::angleAxis(1.34f, vec3(1, 0, 0)));
+        //_skeleton.getByName("Bone.019")->setLocalRotation(glm::angleAxis(1.34f, vec3(1, 0, 0)));
+       // _skeleton.getByName("Bone.002")->setLocalRotation(glm::angleAxis(3.14f / 2, vec3(0, 0, 1)));
 
          _skeleton.getRoot()->setLocalTranslation(vec3(0, -10, 0));
         float angle = 3.14f / 6.0;
@@ -83,6 +87,7 @@ public:
          _skeleton.fk();
 
         
+        auto start = high_resolution_clock::now();
 
         int nummesh = _geometry.getNumMeshes();
 
@@ -102,7 +107,29 @@ public:
                     vec4 pos = _origGeometry.getVertexData(meshid, primid, "POSITION", vid);
                     pos[3] = 1; // homogeneous coordinate
 
-                    dualquat newquat = dualquat(glm::angleAxis(0.0f, vec3(0, 0, 1)), vec3(0));
+
+                    quat real(0, 0, 0, 0);
+                    quat dual(0, 0, 0, 0);
+                    for (int i = 0; i < 4; i++) {
+                        std::string name = _geometry.getJointName(0, (int)joints[i]);
+                        Joint* joint = _skeleton.getByName(name);
+                        if (!joint) std::cout << "Error: cannot find name! " << name << std::endl;
+
+                        mat4 invMatrix = _geometry.getInverseBindMatrix(0, joints[i]);
+                        Transform local2global = joint->getLocal2Global();
+
+                        dualquat im = dualquat(quat(invMatrix), vec3(invMatrix[3]));
+                        dualquat lg = dualquat(local2global.r(), local2global.t());
+                        dualquat dq = lg * im;
+
+                        real = real + weights[i] * dq.real;
+                        dual = dual + weights[i] * dq.dual;
+                    }
+
+                    dualquat newquatnorm = normalize(dualquat(real, dual));
+                    vec4 newpos = newquatnorm * pos; // HERE!!!!
+
+                    /*dualquat newquat = dualquat(glm::angleAxis(0.0f, vec3(0, 0, 1)), vec3(0));
 
                     for (int i = 0; i < 4; i++) {
 
@@ -132,7 +159,7 @@ public:
 
                     dualquat newquatnorm = normalize(newquat);
 
-                    vec4 newpos = newquatnorm * pos * inverse(newquatnorm);
+                    vec4 newpos = newquatnorm * pos * inverse(newquatnorm);*/
 
 
 
@@ -143,6 +170,25 @@ public:
         }
 
         _geometry.update();
+
+
+        auto stop = high_resolution_clock::now();
+
+
+        auto duration = duration_cast<microseconds>(stop - start);
+        //std::cout << "Time taken by frame "<< count << "is " << duration.count()/1000.0f<< "milliseconds." << std::endl;
+
+        if (count < 1000) {
+            std::cout << "the count is " << count << endl;
+            sum += duration.count() / 1000.0f;
+            std::cout << "the sum is " << sum << std::endl;
+            std::cout << "the average is " << sum / 1000 << std::endl;
+
+        }
+
+
+
+        count++;
 
         setColor(vec3(1));
 
@@ -155,7 +201,7 @@ public:
         drawer.setJointRadius(1.0);
         //drawer.setScale(100);
         drawer.setColor(vec3(1));
-        drawer.draw(renderer, _skeleton);
+       // drawer.draw(renderer, _skeleton);
         drawFloor(200, 4, 1);
     }
 
@@ -166,6 +212,8 @@ private:
     AGLTFGeometry _geometry;
     AGLTFGeometry _origGeometry;
     std::vector<Joint*> joints;
+    int count = 0;
+    float sum = 0.0f;
 };
 
 int main(int argc, char** argv) {

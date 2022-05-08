@@ -4,6 +4,7 @@
 #include "AGLTFGeometry.h"
 #include "ASkeletonDrawer.h"
 #include <chrono>
+#include <glm/gtx/dual_quaternion.hpp>
 
 using namespace std::chrono;
 using namespace atk;
@@ -14,17 +15,18 @@ using glm::quat;
 
 class AGLTFSimple : public atkui::Framework
 {
-public:
+  public:
     AGLTFSimple() : atkui::Framework(atkui::Perspective) {
     }
 
     virtual void setup()
     {
+      lookAt(vec3(-30, 35, -30), vec3(0));
 
 
-        atk::BVHReader reader;
-        reader.load("../motions/thread_restpose.bvh", _skeleton, _motion);
-
+      loadMotion("../motions/thread-v2.bvh");
+      _geometry.load("../models/thread-v2.glb");
+      _origGeometry.load("../models/thread-v2.glb");
         /*for (int i = 0; i < _skeleton.getNumJoints(); i++) {
             if (_skeleton.getByID(i) == _skeleton.getByName("Bone")) {
                 _skeleton.getByID(i)->setLocalTranslation(vec3(0, 0, 0));
@@ -33,11 +35,6 @@ public:
                 _skeleton.getByID(i)->setLocalTranslation(vec3(0, 50, 0));
             }
         }*/
-
-        _geometry.load("../models/thread_noroll.glb");
-        _origGeometry.load("../models/thread_noroll.glb");
-
-
         _geometry.print(false);
 
         for (int i = 0; i < _geometry.getNumSkinJoints(0); i++) {
@@ -111,88 +108,81 @@ public:
         //_origGeometry.load("../models/thread.glb"); // need to keep original vertices
         //_geometry.print();
 
-
-
     }
 
     virtual void scene() {
 
-        // try to edit vertices
-        _motion.update(_skeleton, elapsedTime());
-
-        //float factor = sin(elapsedTime());
-        //_skeleton.getByName("Bone.002")->setLocalRotation(glm::angleAxis(factor, vec3(0, 0, 1)));
-
-
       
         setColor(vec3(0, 1, 0));
 
-        // todo: loop over all joints and draw
+       
+      // try to edit vertices
+     /*float theta = fabs(sin(0.8f * elapsedTime())) - 1.0f;
+      _skeleton.getByID(0)->setLocalRotation(glm::angleAxis(0.0f, vec3(0,0,1)));
+      for (int i = 1; i < _skeleton.getNumJoints(); i++) {
+        _skeleton.getByID(i)->setLocalRotation(glm::angleAxis(theta+i*0.1f, vec3(0,0,1)));
+      }*/
+
+
         for (unsigned int i = 0; i < _skeleton.getNumJoints(); i++) {
 
             if (_skeleton.getByID(i) == _skeleton.getRoot()) {
                 continue;
             }
             Joint* parent = _skeleton.getByID(i)->getParent();
-           // parent->setLocalRotation(glm::angleAxis<float>(sin(1.5f * elapsedTime() + i), vec3(0, 0, 1)));
+            parent->setLocalRotation(glm::angleAxis<float>(sin(1.5f * elapsedTime()+ i), vec3(0, 0, 1)));
             Joint* child = _skeleton.getByID(i);
             vec3 globalParentPos = parent->getGlobalTranslation();
             vec3 globalPos = child->getGlobalTranslation();
-            //drawEllipsoid(globalParentPos, globalPos, 3);
+            // drawEllipsoid(globalParentPos, globalPos, 3);
 
 
         }
 
-        _skeleton.getByName("Bone.002")->setLocalRotation(glm::angleAxis(3.14f / 2, vec3(0, 0, 1)));
+      _skeleton.fk();
 
-        _skeleton.fk(); // computes local2global transforms
-        
-
-        auto start = high_resolution_clock::now();
+      setColor(vec3(0, 1, 0));
 
 
-        int nummesh = _geometry.getNumMeshes();
+      auto start = high_resolution_clock::now();
 
-        for (int meshid = 0; meshid < nummesh; meshid++) {
-            int numprims = _geometry.getNumPrimitives(meshid);
+      int nummesh = _geometry.getNumMeshes();
 
-            for (int primid = 0; primid < numprims; primid++) {
-                int numverts = _geometry.getNumVertices(meshid, primid, "POSITION");
+      for (int meshid = 0; meshid < nummesh; meshid++) {
+        int numprims = _geometry.getNumPrimitives(meshid);
 
-                for (int vid = 0; vid < numverts; vid++) {
+        for (int primid = 0; primid < numprims; primid++) {
+          int numverts = _geometry.getNumVertices(meshid, primid, "POSITION");
 
-                    vec4 weights = _geometry.getVertexData(meshid, primid, "WEIGHTS_0", vid);
-                    vec4 joints = _geometry.getVertexData(meshid, primid, "JOINTS_0", vid);
+          for (int vid = 0; vid < numverts; vid++) {
 
+            vec4 weights = _geometry.getVertexData(meshid, primid, "WEIGHTS_0", vid);
+            vec4 joints = _geometry.getVertexData(meshid, primid, "JOINTS_0", vid);
 
-                    //std::cout << joints << std::endl;
-                    //std::cout << "matrix" << _geometry.getInverseBindMatrix(0, joints[0]) << endl;
-                    // Need to use original vertices for calculations!
-                    vec4 pos = _origGeometry.getVertexData(meshid, primid, "POSITION", vid);
-                    pos[3] = 1; // homogeneous coordinate
+            // Need to use original vertices for calculations!
+            vec4 pos = _origGeometry.getVertexData(meshid, primid, "POSITION", vid);
+            pos[3] = 1; // homogeneous coordinate
 
+            quat real(0,0,0,0);
+            quat dual(0,0,0,0);
+            for (int i = 0; i < 4; i++) {
+              std::string name = _geometry.getJointName(0, (int)joints[i]);
+              Joint* joint = _skeleton.getByName(name);
+              if (!joint) std::cout << "Error: cannot find name! " << name << std::endl;
 
+              mat4 invMatrix = _geometry.getInverseBindMatrix(0, joints[i]);
+              Transform local2global = joint->getLocal2Global();
 
-                    quat real(0, 0, 0, 0);
-                    quat dual(0, 0, 0, 0);
-                    for (int i = 0; i < 4; i++) {
-                        std::string name = _geometry.getJointName(0, (int)joints[i]);
-                        Joint* joint = _skeleton.getByName(name);
-                        if (!joint) std::cout << "Error: cannot find name! " << name << std::endl;
+              dualquat im = dualquat(quat(invMatrix), vec3(invMatrix[3]));
+              dualquat lg = dualquat(local2global.r(), local2global.t());
+              dualquat dq = lg * im;
 
-                        mat4 invMatrix = _geometry.getInverseBindMatrix(0, joints[i]);
-                        Transform local2global = joint->getLocal2Global();
+              real = real + weights[i] * dq.real; 
+              dual = dual + weights[i] * dq.dual; 
+            }
 
-                        dualquat im = dualquat(quat(invMatrix), vec3(invMatrix[3]));
-                        dualquat lg = dualquat(local2global.r(), local2global.t());
-                        dualquat dq = lg * im;
-
-                        real = real + weights[i] * dq.real; // HERE!
-                        dual = dual + weights[i] * dq.dual; // HERE!
-                    }
-
-                    dualquat newquatnorm = normalize(dualquat(real, dual));
-                    vec4 newpos = newquatnorm * pos; // HERE!!!!
+            dualquat newquatnorm = normalize(dualquat(real, dual));
+            vec4 newpos = newquatnorm * pos; // HERE!!!!
 
                    /*dualquat newquat = dualquat(glm::angleAxis(0.0f, vec3(0, 0, 1)), vec3(0));
 
@@ -230,53 +220,49 @@ public:
 
                     // vec4 newpos = skinMatrix * pos;
 
-                    _geometry.setVertexData(meshid, primid, "POSITION", vid, newpos);
+                   _geometry.setVertexData(meshid, primid, "POSITION", vid, newpos);
 
                     //weights = _geometry.getVertexData(meshid, primid, "WEIGHTS_0", vid); 
                     //std::cout << weights << std::endl;
                 }
             }
-        }
-
-        _geometry.update();
-
-
-        auto stop = high_resolution_clock::now();
-
-
-        auto duration = duration_cast<microseconds>(stop - start);
-        //std::cout << "Time taken by frame "<< count << "is " << duration.count()/1000.0f<< "milliseconds." << std::endl;
-
-       /* if (count < 1000) {
-            std::cout << "the count is " << count << endl;
-            sum += duration.count() / 1000.0f;
-            std::cout << "the sum is " << sum << std::endl;
-            std::cout << "the average is " << sum / 1000 << std::endl;
 
         }
-        */
+
+      _geometry.update();
 
 
-        count++;
+      auto stop = high_resolution_clock::now();
 
-        //setColor(vec3(0, 1, 0));
-        renderer.push();
-        //renderer.rotate(-3.14 / 2.0, vec3(1, 0, 0));
-        //renderer.rotate(1.5708, vec3(1, 0, 0));
-        //renderer.rotate(-1.5708, vec3(0, 0, 1));
-        //renderer.translate(vec3(0, 70, 0));
-        renderer.translate(vec3(180, 0, 0));
-        //renderer.translate(vec3(-50, 0, 0));
-        renderer.scale(vec3(10));
-        //renderer.scale(vec3(170, 50, 170));
-        _geometry.draw(renderer);
-        renderer.pop();
 
-        ASkeletonDrawer drawer;
+      auto duration = duration_cast<microseconds>(stop - start);
+      //std::cout << "Time taken by frame "<< count << "is " << duration.count()/1000.0f<< "milliseconds." << std::endl;
 
-        drawer.setJointRadius(0.5);
-        drawer.setScale(10);
-        //drawer.draw(renderer, _skeleton);
+      /* if (count < 1000) {
+         std::cout << "the count is " << count << endl;
+         sum += duration.count() / 1000.0f;
+         std::cout << "the sum is " << sum << std::endl;
+         std::cout << "the average is " << sum / 1000 << std::endl;
+
+         }
+       */
+
+
+      count++;
+
+      //setColor(vec3(0, 1, 0));
+      renderer.push();
+      renderer.translate(vec3(4, 0, 0));
+      _geometry.draw(renderer);
+      renderer.pop();
+
+
+      ASkeletonDrawer drawer;
+
+      drawer.setJointRadius(0.5);
+      //drawer.setScale(100);
+     // drawer.draw(renderer, _skeleton);
+
     }
 
 
@@ -285,11 +271,18 @@ public:
     }
 
     virtual void loadMotion(const std::string& filename) {
-        atk::BVHReader reader;
-        reader.load(filename, _skeleton, _motion);
+      atk::BVHReader reader;
+      reader.load(filename, _skeleton, _motion);
     }
 
-private:
+    virtual void keyUp(int key, int mods) {
+      vec3 pos = _skeleton.getByID(0)->getLocalTranslation();
+      std::cout << key << " " << pos << std::endl;
+      if (key == 'Q') _skeleton.getByID(0)->setLocalTranslation(pos+vec3(0,5,0));
+      if (key == 'W') _skeleton.getByID(0)->setLocalTranslation(pos-vec3(0,5,0));
+    }
+
+  private:
 
     float _factor = 1;
     Skeleton _skeleton;
@@ -312,8 +305,8 @@ private:
 };
 
 int main(int argc, char** argv) {
-    AGLTFSimple viewer;
-    viewer.run();
+  AGLTFSimple viewer;
+  viewer.run();
 }
 
 

@@ -26,8 +26,10 @@ public:
        // loadMotion("../motions/thread_bending_low.bvh");
 
 
-        atk::BVHReader reader;
-        reader.load("../motions/thread_restpose.bvh", _skeleton, _motion);
+        lookAt(vec3(-30, 35, -30), vec3(0));
+
+
+        loadMotion("../motions/thread-v2.bvh");
 
 
 
@@ -40,8 +42,8 @@ public:
             }
         }*/
 
-        _geometry.load("../models/thread_noroll.glb");
-        _origGeometry.load("../models/thread_noroll.glb");
+        _geometry.load("../models/thread-v2.glb");
+        _origGeometry.load("../models/thread-v2.glb");
 
 
 
@@ -113,7 +115,7 @@ public:
         //_geometry.print();
 
 
-        mat4 invMatrix = _geometry.getInverseBindMatrix(0, 0);
+       /* mat4 invMatrix = _geometry.getInverseBindMatrix(0, 0);
         std::cout << "INV 0" << invMatrix << std::endl;
 
         invMatrix = _geometry.getInverseBindMatrix(0, 1);
@@ -145,39 +147,53 @@ public:
         invMatrix = _geometry.getInverseBindMatrix(0, 9);
         std::cout << "INV 9" << invMatrix << std::endl;
 
-
+        */
     }
 
     virtual void scene() {
 
         // try to edit vertices
 
-        _motion.update(_skeleton, elapsedTime());
+        //_motion.update(_skeleton, elapsedTime());
 
         //_motion.update(_skeleton, elapsedTime());
        
         //_skeleton.fk(); // computes local2global transforms
         setColor(vec3(0, 1, 0));
 
+
+        /*float theta = fabs(sin(0.8f * elapsedTime())) - 1.0f;
+        _skeleton.getByID(0)->setLocalRotation(glm::angleAxis(0.0f, vec3(0, 0, 1)));
+        for (int i = 1; i < _skeleton.getNumJoints(); i++) {
+            _skeleton.getByID(i)->setLocalRotation(glm::angleAxis(theta + i * 0.1f, vec3(0, 0, 1)));
+        }*/
+       
+
+
         // todo: loop over all joints and draw
-        for (unsigned int i = 0; i < _skeleton.getNumJoints(); i++) {
+      for (unsigned int i = 0; i < _skeleton.getNumJoints(); i++) {
 
             if (_skeleton.getByID(i) == _skeleton.getRoot()) {
                 continue;
             }
             Joint* parent = _skeleton.getByID(i)->getParent();
-            //parent->setLocalRotation(glm::angleAxis<float>(sin(1.5f * elapsedTime()+ i), vec3(0, 0, 1)));
+            parent->setLocalRotation(glm::angleAxis<float>(sin(1.5f * elapsedTime()+ i), vec3(0, 0, 1)));
             Joint* child = _skeleton.getByID(i);
             vec3 globalParentPos = parent->getGlobalTranslation();
             vec3 globalPos = child->getGlobalTranslation();
            // drawEllipsoid(globalParentPos, globalPos, 3);
 
-
+           
         }
 
-        _skeleton.getByName("Bone.002")->setLocalRotation(glm::angleAxis(3.14f/2, vec3(0, 0, 1)));
 
-        _skeleton.fk(); // computes local2global transforms
+         _skeleton.fk();
+
+       
+
+       // _skeleton.getByName("Bone.002")->setLocalRotation(glm::angleAxis(3.14f/2, vec3(0, 0, 1)));
+
+       // _skeleton.fk(); // computes local2global transforms
        
        auto start = high_resolution_clock::now();
 

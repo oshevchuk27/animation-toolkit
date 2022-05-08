@@ -127,8 +127,6 @@ public:
             }
         }
 
-        _geometry.update();
-
 
         auto stop = high_resolution_clock::now();
 
